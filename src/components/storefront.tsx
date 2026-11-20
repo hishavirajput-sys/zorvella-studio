@@ -10,6 +10,7 @@ import {
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ArrowUpRight, Heart, Menu, Minus, Plus, ShoppingBag, UserRound, X } from "lucide-react";
 import { toast } from "sonner";
+import { LovableMark } from "@lovable.dev/cloud-auth-js/react";
 
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -312,7 +313,7 @@ export function SignInOptions({ onGoogle, onLovable, loading }: { onGoogle: () =
         Continue with Google
       </Button>
       <Button type="button" variant="outline" disabled={loading} className="provider-button" onClick={onLovable}>
-        <span className="lovable-mark" aria-hidden="true">♥</span> Continue with Lovable
+        <LovableMark className="lovable-mark" /> Continue with Lovable
       </Button>
     </div>
   );
