@@ -58,5 +58,14 @@ function CategoriesPage() {
       await queryClient.invalidateQueries();
     }
   }
-  return <AdminGate><h2 className="admin-page-heading">Product categories</h2><div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Name</th><th>URL name</th><th>Status</th><th>Action</th></tr></thead><tbody>{categories.length ? categories.map((category) => <tr key={category.id}><td>{category.name}</td><td>{category.slug}</td><td>{category.is_published ? "Published" : "Draft"}</td><td>{category.is_published && <Button type="button" variant="ghost" size="sm" onClick={() => void unpublish(category.id)}>Unpublish</Button>}</td></tr>) : <tr><td colSpan={4}>No categories yet.</td></tr>}</tbody></table></div><h3 className="admin-subheading">Create a draft category</h3><form className="admin-add-form" onSubmit={submit}><label>Name<input className="store-field" name="name" minLength={2} maxLength={120} required /></label><label>Page address (slug)<input className="store-field" name="slug" placeholder="a-short-name" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" maxLength={140} required /></label><Button type="submit" className="store-link admin-add-button">Save category</Button>{error && <p className="auth-error" role="alert">{error}</p>}</form></AdminGate>;
+  async function publish(id: string) {
+    const { error: saveError } = await supabase.from("categories").update({ is_active: true, is_published: true }).eq("id", id);
+    if (saveError) {
+      toast.error("This category could not be published.");
+    } else {
+      toast.success("The category is now visible to visitors.");
+      await queryClient.invalidateQueries();
+    }
+  }
+  return <AdminGate><h2 className="admin-page-heading">Product categories</h2><div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Name</th><th>URL name</th><th>Status</th><th>Action</th></tr></thead><tbody>{categories.length ? categories.map((category) => <tr key={category.id}><td>{category.name}</td><td>{category.slug}</td><td>{category.is_published ? "Published" : "Draft"}</td><td><Button type="button" variant="ghost" size="sm" onClick={() => void (category.is_published ? unpublish(category.id) : publish(category.id))}>{category.is_published ? "Unpublish" : "Publish"}</Button></td></tr>) : <tr><td colSpan={4}>No categories yet.</td></tr>}</tbody></table></div><h3 className="admin-subheading">Create a draft category</h3><form className="admin-add-form" onSubmit={submit}><label>Name<input className="store-field" name="name" minLength={2} maxLength={120} required /></label><label>Page address (slug)<input className="store-field" name="slug" placeholder="a-short-name" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" maxLength={140} required /></label><Button type="submit" className="store-link admin-add-button">Save category</Button>{error && <p className="auth-error" role="alert">{error}</p>}</form></AdminGate>;
 }

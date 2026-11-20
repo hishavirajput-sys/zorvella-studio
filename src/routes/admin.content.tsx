@@ -9,10 +9,10 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/admin/content")({
   head: () => ({ meta: [
-    { title: "Store Content — ZORVELLAE" },
-    { name: "description", content: "Review and prepare approved ZORVELLAE store content." },
-    { property: "og:title", content: "Store Content — ZORVELLAE" },
-    { property: "og:description", content: "Manage published pages for the ZORVELLAE storefront." },
+    { title: "Content Drafts — ZORVELLAE" },
+    { name: "description", content: "Review and prepare ZORVELLAE page copy for future publication." },
+    { property: "og:title", content: "Content Drafts — ZORVELLAE" },
+    { property: "og:description", content: "Manage store page copy drafts." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
@@ -55,5 +55,5 @@ function ContentAdminPage() {
       toast.success("Page status updated."); await queryClient.invalidateQueries();
     }
   }
-  return <AdminGate><h2 className="admin-page-heading">Published store content</h2><div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Page name</th><th>Title</th><th>Status</th><th>Action</th></tr></thead><tbody>{pages.length ? pages.map((page) => <tr key={page.id}><td>{page.page_key}</td><td>{page.title}</td><td>{page.status}</td><td><Button size="sm" variant="ghost" onClick={() => void togglePublish(page.id, page.status)}>{page.status === "published" ? "Unpublish" : "Publish"}</Button></td></tr>) : <tr><td colSpan={4}>No content pages have been added yet.</td></tr>}</tbody></table></div><h3 className="admin-subheading">Add approved copy</h3><form className="admin-add-form" onSubmit={submit}><label>Page address<input className="store-field" name="page_key" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" required maxLength={100} /></label><label>Title<input className="store-field" name="title" maxLength={180} required /></label><label>Body<textarea className="store-field store-textarea" name="body" maxLength={15000} required /></label><Button type="submit" className="store-link admin-add-button">Save as draft</Button>{error && <p className="auth-error" role="alert">{error}</p>}</form></AdminGate>;
+  return <AdminGate><h2 className="admin-page-heading">Content copy drafts</h2><p className="account-lead">Draft copy is saved for review; it does not replace live storefront pages yet.</p><div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Page name</th><th>Title</th><th>Status</th><th>Action</th></tr></thead><tbody>{pages.length ? pages.map((page) => <tr key={page.id}><td>{page.page_key}</td><td>{page.title}</td><td>{page.status}</td><td><Button size="sm" variant="ghost" onClick={() => void togglePublish(page.id, page.status)}>{page.status === "published" ? "Unpublish" : "Mark reviewed"}</Button></td></tr>) : <tr><td colSpan={4}>No content pages have been added yet.</td></tr>}</tbody></table></div><h3 className="admin-subheading">Add approved copy</h3><form className="admin-add-form" onSubmit={submit}><label>Page address<input className="store-field" name="page_key" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" required maxLength={100} /></label><label>Title<input className="store-field" name="title" maxLength={180} required /></label><label>Body<textarea className="store-field store-textarea" name="body" maxLength={15000} required /></label><Button type="submit" className="store-link admin-add-button">Save as draft</Button>{error && <p className="auth-error" role="alert">{error}</p>}</form></AdminGate>;
 }

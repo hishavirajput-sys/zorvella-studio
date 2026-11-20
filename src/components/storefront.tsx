@@ -112,7 +112,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       return;
     }
     const variant = Array.isArray(product.variants)
-      ? product.variants.find((value) => value && typeof value === "object" && !Array.isArray(value) && value.id === variantId)
+      ? product.variants.find((value) => value && typeof value === "object" && !Array.isArray(value) && value["id"] === variantId)
       : undefined;
     const firstVariant = Array.isArray(product.variants) ? product.variants[0] : undefined;
     const variantIdValue = variant && typeof variant === "object" && !Array.isArray(variant) ? variant["id"] : undefined;
