@@ -247,27 +247,39 @@ export type Database = {
       }
       inventory_adjustments: {
         Row: {
+          action: string
+          adjustment_amount: number
           changed_by: string | null
           created_at: string
           id: string
+          new_quantity: number
+          previous_quantity: number | null
           product_id: string | null
           quantity_change: number
           reason: string
           variant_id: string
         }
         Insert: {
+          action?: string
+          adjustment_amount?: number
           changed_by?: string | null
           created_at?: string
           id?: string
+          new_quantity?: number
+          previous_quantity?: number | null
           product_id?: string | null
           quantity_change?: number
           reason?: string
           variant_id?: string
         }
         Update: {
+          action?: string
+          adjustment_amount?: number
           changed_by?: string | null
           created_at?: string
           id?: string
+          new_quantity?: number
+          previous_quantity?: number | null
           product_id?: string | null
           quantity_change?: number
           reason?: string
@@ -374,12 +386,14 @@ export type Database = {
           is_demo: boolean
           is_published: boolean
           legacy_id: string | null
+          low_stock_threshold: number
           name: string
           price: number
           purchase_available: boolean
           slug: string
           sort_order: number
           specifications: Json
+          stock_by_variant: Json
           updated_at: string
           usage: string
           variants: Json
@@ -399,12 +413,14 @@ export type Database = {
           is_demo?: boolean
           is_published?: boolean
           legacy_id?: string | null
+          low_stock_threshold?: number
           name: string
           price?: number
           purchase_available?: boolean
           slug: string
           sort_order?: number
           specifications?: Json
+          stock_by_variant?: Json
           updated_at?: string
           usage?: string
           variants?: Json
@@ -424,12 +440,14 @@ export type Database = {
           is_demo?: boolean
           is_published?: boolean
           legacy_id?: string | null
+          low_stock_threshold?: number
           name?: string
           price?: number
           purchase_available?: boolean
           slug?: string
           sort_order?: number
           specifications?: Json
+          stock_by_variant?: Json
           updated_at?: string
           usage?: string
           variants?: Json
@@ -512,6 +530,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      adjust_product_inventory: {
+        Args: {
+          p_action: string
+          p_product_id: string
+          p_quantity: number
+          p_reason: string
+          p_variant_id: string
+        }
+        Returns: {
+          action: string
+          adjustment_amount: number
+          adjustment_id: string
+          created_at: string
+          new_quantity: number
+          previous_quantity: number
+          reason: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
