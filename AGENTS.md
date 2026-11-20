@@ -28,3 +28,6 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## External application migrations
+- Keep migrated screens in TanStack Start file routes and shared UI in reusable components, rather than copying the source router, because this project is built on TanStack Start.
