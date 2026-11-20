@@ -4,6 +4,7 @@ import { ShieldAlert } from "lucide-react";
 
 import { Storefront } from "@/components/storefront";
 import { supabase } from "@/integrations/supabase/client";
+import type { ReactNode } from "react";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
@@ -46,7 +47,7 @@ export function AdminLayout() {
   return <Storefront><section className="admin-layout"><span className="eyebrow">ZORVELLAE · Store studio</span><div className="admin-toolbar"><h1>Thoughtful store management.</h1></div><nav className="admin-nav" aria-label="Store administration">{navigation.map(({ path, label }) => <Link to={path} key={path} aria-current={location.pathname === path ? "page" : undefined}>{label}</Link>)}</nav><Outlet /></section></Storefront>;
 }
 
-export function AdminGate({ children }: { children: React.ReactNode }) {
+export function AdminGate({ children }: { children: ReactNode }) {
   const [allowed, setAllowed] = useState<boolean | null>(null);
   useEffect(() => {
     let active = true;

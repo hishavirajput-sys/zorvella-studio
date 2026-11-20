@@ -27,6 +27,10 @@ import { Route as WishlistRouteImport } from './routes/wishlist'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
+import { Route as AdminContentRouteImport } from './routes/admin.content'
+import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
+import { Route as AdminIngredientsRouteImport } from './routes/admin.ingredients'
+import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminProductsRouteImport } from './routes/admin.products'
 import { Route as ContactThankYouRouteImport } from './routes/contact.thank-you'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
@@ -125,6 +129,26 @@ const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
   path: '/categories',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminContentRoute = AdminContentRouteImport.update({
+  id: '/content',
+  path: '/content',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCustomersRoute = AdminCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminIngredientsRoute = AdminIngredientsRouteImport.update({
+  id: '/ingredients',
+  path: '/ingredients',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminOrdersRoute = AdminOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminProductsRoute = AdminProductsRouteImport.update({
   id: '/products',
   path: '/products',
@@ -187,6 +211,10 @@ export interface FileRoutesByFullPath {
   '/wishlist': typeof WishlistRoute
   '/account': typeof AuthenticatedAccountRouteWithChildren
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/content': typeof AdminContentRoute
+  '/admin/customers': typeof AdminCustomersRoute
+  '/admin/ingredients': typeof AdminIngredientsRoute
+  '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
   '/contact/thank-you': typeof ContactThankYouRoute
   '/product/$slug': typeof ProductSlugRoute
@@ -213,6 +241,10 @@ export interface FileRoutesByTo {
   '/wishlist': typeof WishlistRoute
   '/account': typeof AuthenticatedAccountRouteWithChildren
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/content': typeof AdminContentRoute
+  '/admin/customers': typeof AdminCustomersRoute
+  '/admin/ingredients': typeof AdminIngredientsRoute
+  '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
   '/contact/thank-you': typeof ContactThankYouRoute
   '/product/$slug': typeof ProductSlugRoute
@@ -242,6 +274,10 @@ export interface FileRoutesById {
   '/wishlist': typeof WishlistRoute
   '/_authenticated/account': typeof AuthenticatedAccountRouteWithChildren
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/content': typeof AdminContentRoute
+  '/admin/customers': typeof AdminCustomersRoute
+  '/admin/ingredients': typeof AdminIngredientsRoute
+  '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
   '/contact/thank-you': typeof ContactThankYouRoute
   '/product/$slug': typeof ProductSlugRoute
@@ -271,6 +307,10 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/account'
     | '/admin/categories'
+    | '/admin/content'
+    | '/admin/customers'
+    | '/admin/ingredients'
+    | '/admin/orders'
     | '/admin/products'
     | '/contact/thank-you'
     | '/product/$slug'
@@ -297,6 +337,10 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/account'
     | '/admin/categories'
+    | '/admin/content'
+    | '/admin/customers'
+    | '/admin/ingredients'
+    | '/admin/orders'
     | '/admin/products'
     | '/contact/thank-you'
     | '/product/$slug'
@@ -325,6 +369,10 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/_authenticated/account'
     | '/admin/categories'
+    | '/admin/content'
+    | '/admin/customers'
+    | '/admin/ingredients'
+    | '/admin/orders'
     | '/admin/products'
     | '/contact/thank-you'
     | '/product/$slug'
@@ -483,6 +531,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCategoriesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/content': {
+      id: '/admin/content'
+      path: '/content'
+      fullPath: '/admin/content'
+      preLoaderRoute: typeof AdminContentRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/customers': {
+      id: '/admin/customers'
+      path: '/customers'
+      fullPath: '/admin/customers'
+      preLoaderRoute: typeof AdminCustomersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/ingredients': {
+      id: '/admin/ingredients'
+      path: '/ingredients'
+      fullPath: '/admin/ingredients'
+      preLoaderRoute: typeof AdminIngredientsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/orders': {
+      id: '/admin/orders'
+      path: '/orders'
+      fullPath: '/admin/orders'
+      preLoaderRoute: typeof AdminOrdersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/products': {
       id: '/admin/products'
       path: '/products'
@@ -585,12 +661,20 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface AdminRouteChildren {
   AdminCategoriesRoute: typeof AdminCategoriesRoute
+  AdminContentRoute: typeof AdminContentRoute
+  AdminCustomersRoute: typeof AdminCustomersRoute
+  AdminIngredientsRoute: typeof AdminIngredientsRoute
+  AdminOrdersRoute: typeof AdminOrdersRoute
   AdminProductsRoute: typeof AdminProductsRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminCategoriesRoute: AdminCategoriesRoute,
+  AdminContentRoute: AdminContentRoute,
+  AdminCustomersRoute: AdminCustomersRoute,
+  AdminIngredientsRoute: AdminIngredientsRoute,
+  AdminOrdersRoute: AdminOrdersRoute,
   AdminProductsRoute: AdminProductsRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
