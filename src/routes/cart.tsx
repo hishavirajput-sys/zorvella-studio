@@ -24,7 +24,7 @@ function CartPage() {
   const { data: products } = useSuspenseQuery(catalogQueryOptions());
   const validItems = cart.items.filter((item) => {
     const product = products.find((entry) => entry.id === item.productId);
-    return product && isPurchasableProduct(product) && Array.isArray(product.variants) && product.variants.some((variant) => variant && typeof variant === "object" && !Array.isArray(variant) && variant.id === item.variantId);
+    return product && isPurchasableProduct(product) && Array.isArray(product.variants) && product.variants.some((variant) => variant && typeof variant === "object" && !Array.isArray(variant) && variant["id"] === item.variantId);
   });
   const subtotal = calculateCartSubtotal(validItems, products);
   const currency = products.find((product) => validItems.some((item) => item.productId === product.id))?.currency ?? "USD";
@@ -36,10 +36,11 @@ function CartPage() {
           <div className="cart-list">{validItems.map((item) => {
             const product = products.find((entry) => entry.id === item.productId);
             if (!product) return null;
-            const variant = Array.isArray(product.variants) ? product.variants.find((entry) => entry && typeof entry === "object" && !Array.isArray(entry) && entry.id === item.variantId) : null;
-            const variantLabel = variant && typeof variant === "object" && !Array.isArray(variant) && typeof variant.label === "string" ? variant.label : "Formulation";
-            const unitPrice = variant && typeof variant === "object" && !Array.isArray(variant) && typeof variant.price === "number" ? variant.price : 0;
-            const image = Array.isArray(product.images) && product.images[0] && typeof product.images[0] === "object" && !Array.isArray(product.images[0]) ? product.images[0].url : null;
+            const variant = Array.isArray(product.variants) ? product.variants.find((entry) => entry && typeof entry === "object" && !Array.isArray(entry) && entry["id"] === item.variantId) : null;
+            const variantLabel = variant && typeof variant === "object" && !Array.isArray(variant) && typeof variant["label"] === "string" ? variant["label"] : "Formulation";
+            const unitPrice = variant && typeof variant === "object" && !Array.isArray(variant) && typeof variant["price"] === "number" ? variant["price"] : 0;
+            const firstImage = Array.isArray(product.images) ? product.images[0] : undefined;
+            const image = firstImage && typeof firstImage === "object" && !Array.isArray(firstImage) ? firstImage["url"] : null;
             return <article className="cart-item" key={`${item.productId}-${item.variantId}`}><div className="cart-item-image">{typeof image === "string" && <img src={image} alt="" />}</div><div className="cart-item-copy"><span className="eyebrow">{product.category_label || "Formulation"}</span><Link className="cart-product-name" to="/product/$slug" params={{ slug: product.slug }}>{product.name}</Link><p className="cart-variant">{variantLabel} · {formatPrice(unitPrice, product.currency)}</p><div className="cart-item-actions"><QuantityStepper quantity={item.quantity} onChange={(quantity) => void cart.changeQuantity(item.productId, item.variantId, quantity)} /><Button variant="ghost" size="sm" className="cart-remove" onClick={() => void cart.removeItem(item.productId, item.variantId)}>Remove</Button></div></div><div className="cart-item-total">{formatPrice(unitPrice * item.quantity, product.currency)}</div></article>;
           })}</div>
           <div className="cart-summary"><div className="cart-summary-row"><span>Subtotal</span><span>{formatPrice(subtotal, currency)}</span></div><p className="cart-summary-note">Shipping and taxes are not calculated here. Checkout will open once the real product catalogue, shipping and payment arrangements are configured.</p><Button type="button" className="store-link cart-checkout" disabled>Checkout is not yet available</Button><Link to="/shop" className="secondary-cart-link text-link">Continue discovering <ArrowRight size={13} /></Link></div>

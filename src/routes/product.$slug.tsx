@@ -32,14 +32,20 @@ function ProductPage() {
   }
   const images = Array.isArray(product.images) ? product.images : [];
   const image = images[0] && typeof images[0] === "object" && !Array.isArray(images[0]) ? images[0] : null;
-  const variants = Array.isArray(product.variants) ? product.variants.filter((variant): variant is { id: string; label: string; price: number } => Boolean(variant) && typeof variant === "object" && !Array.isArray(variant) && typeof variant.id === "string" && typeof variant.label === "string" && typeof variant.price === "number") : [];
+  const variants = Array.isArray(product.variants) ? product.variants.flatMap((variant) => {
+    if (!variant || typeof variant !== "object" || Array.isArray(variant)) return [];
+    const id = variant["id"];
+    const label = variant["label"];
+    const price = variant["price"];
+    return typeof id === "string" && typeof label === "string" && typeof price === "number" ? [{ id, label, price }] : [];
+  }) : [];
   const selectedVariant = variants.find((variant) => variant.id === variantId) ?? variants[0];
   const available = isPurchasableProduct(product);
   return (
     <Storefront>
       <div className="page-content"><Link className="text-link" to="/shop"><ArrowLeft size={14} /> Back to the formulations</Link></div>
       <section className="details-layout">
-        <div className="product-details-photo">{typeof image?.url === "string" && image.url ? <img src={image.url} alt={typeof image.alt === "string" ? image.alt : product.name} /> : <div className="product-details-placeholder" aria-label="A ZORVELLAE product photograph is not yet available."><span>Z</span></div>}</div>
+        <div className="product-details-photo">{typeof image?.["url"] === "string" && image["url"] ? <img src={image["url"]} alt={typeof image["alt"] === "string" ? image["alt"] : product.name} /> : <div className="product-details-placeholder" aria-label="A ZORVELLAE product photograph is not yet available."><span>Z</span></div>}</div>
         <div className="product-details-copy">
           <span className="eyebrow">{product.category_label || "Botanical formulation"}</span>
           <h1>{product.name}</h1>

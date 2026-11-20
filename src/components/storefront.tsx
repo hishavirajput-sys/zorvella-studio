@@ -114,7 +114,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const variant = Array.isArray(product.variants)
       ? product.variants.find((value) => value && typeof value === "object" && !Array.isArray(value) && value.id === variantId)
       : undefined;
-    const id = typeof variant?.id === "string" ? variant.id : Array.isArray(product.variants) && product.variants[0] && typeof product.variants[0] === "object" && !Array.isArray(product.variants[0]) ? product.variants[0].id : "";
+    const firstVariant = Array.isArray(product.variants) ? product.variants[0] : undefined;
+    const variantIdValue = variant && typeof variant === "object" && !Array.isArray(variant) ? variant["id"] : undefined;
+    const firstVariantId = firstVariant && typeof firstVariant === "object" && !Array.isArray(firstVariant) ? firstVariant["id"] : undefined;
+    const id = typeof variantIdValue === "string" ? variantIdValue : typeof firstVariantId === "string" ? firstVariantId : "";
     if (!id) {
       toast.error("This formulation has no available size.");
       return;
@@ -260,8 +263,9 @@ export function PageHeading({ eyebrow, title, description, className = "" }: { e
 export function ProductCard({ product, onQuickAdd }: { product: StoreProduct; onQuickAdd?: boolean }) {
   const { addItem } = useStoreCart();
   const [imageError, setImageError] = useState(false);
-  const imageUrl = Array.isArray(product.images) && product.images[0] && typeof product.images[0] === "object" && !Array.isArray(product.images[0]) ? product.images[0].url : null;
-  const imageAlt = Array.isArray(product.images) && product.images[0] && typeof product.images[0] === "object" && !Array.isArray(product.images[0]) ? product.images[0].alt : null;
+  const firstImage = Array.isArray(product.images) ? product.images[0] : undefined;
+  const imageUrl = firstImage && typeof firstImage === "object" && !Array.isArray(firstImage) ? firstImage["url"] : null;
+  const imageAlt = firstImage && typeof firstImage === "object" && !Array.isArray(firstImage) ? firstImage["alt"] : null;
   const available = isPurchasableProduct(product);
   const hasImage = typeof imageUrl === "string" && imageUrl.trim() !== "" && !imageError;
 

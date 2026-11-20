@@ -55,19 +55,25 @@ function AdminProductsPage() {
     setError("");
     const { error: saveError } = await supabase.from("products").insert(product);
     setSaving(false);
-    if (saveError) return setError(saveError.code === "23505" ? "A listing already uses that URL name." : "The listing could not be saved. Please try again.");
-    form.reset();
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ["admin", "products"] }),
-      queryClient.invalidateQueries({ queryKey: ["store", "catalog"] }),
-    ]);
-    toast.success("The draft listing has been saved. Review its details before publishing.");
+    if (saveError) {
+      setError(saveError.code === "23505" ? "A listing already uses that URL name." : "The listing could not be saved. Please try again.");
+    } else {
+      form.reset();
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["admin", "products"] }),
+        queryClient.invalidateQueries({ queryKey: ["store", "catalog"] }),
+      ]);
+      toast.success("The draft listing has been saved. Review its details before publishing.");
+    }
   }
   async function unpublish(id: string) {
     const { error: updateError } = await supabase.from("products").update({ is_active: false, is_published: false, purchase_available: false }).eq("id", id);
-    if (updateError) return toast.error("This listing could not be unpublished.");
-    toast.success("The listing is now hidden and cannot be purchased.");
-    await queryClient.invalidateQueries();
+    if (updateError) {
+      toast.error("This listing could not be unpublished.");
+    } else {
+      toast.success("The listing is now hidden and cannot be purchased.");
+      await queryClient.invalidateQueries();
+    }
   }
   return <AdminGate><h2 className="admin-page-heading">Product listings</h2><div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Formulation</th><th>Starting price</th><th>Visibility</th><th>Purchases</th><th>Actions</th></tr></thead><tbody>{products.length === 0 ? <tr><td colSpan={5}>No product records. Original MongoDB products were not included in the GitHub export.</td></tr> : products.map((product) => <tr key={product.id}><td><Link to="/product/$slug" params={{ slug: product.slug }}>{product.name}</Link><br />/{product.slug}</td><td>{formatPrice(product.price, product.currency)}</td><td>{product.is_published ? "Published" : "Draft"}</td><td>{product.is_demo ? "Demo · not for sale" : product.purchase_available ? "Available" : "Not available"}</td><td>{product.is_published && <Button type="button" variant="ghost" size="sm" onClick={() => void unpublish(product.id)}>Unpublish</Button>}</td></tr>)}</tbody></table></div><h3 className="admin-subheading">Create a draft listing</h3><form className="admin-add-form" onSubmit={submit}><label>Product name<input className="store-field" name="name" minLength={2} maxLength={140} required /></label><label>Page address (slug)<input className="store-field" name="slug" placeholder="a-short-name" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" maxLength={140} required /></label><label>Category<select className="store-field" name="category" required defaultValue=""><option value="" disabled>Choose a category</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label><label>Starting price<input className="store-field" name="price" type="number" min="0" max="100000" step="0.01" required /></label><label>Description<textarea className="store-field store-textarea" name="description" minLength={2} maxLength={4000} required /></label><Button type="submit" className="store-link admin-add-button" disabled={saving || categories.length === 0}>{saving ? "Saving…" : "Save draft listing"}</Button>{error && <p className="auth-error" role="alert">{error}</p>}</form></AdminGate>;
 }
