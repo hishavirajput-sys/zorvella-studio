@@ -4,6 +4,10 @@ export type StoreProduct = Database["public"]["Tables"]["products"]["Row"];
 export type StoreCategory = Database["public"]["Tables"]["categories"]["Row"];
 export type CartItem = { productId: string; variantId: string; quantity: number };
 
+export function customerProfileMetadata(name: string) {
+  return { full_name: name.trim() };
+}
+
 export function getInventoryStatus(quantity: number | undefined, lowStockThreshold = 5) {
   if (quantity === undefined || !Number.isSafeInteger(quantity) || quantity < 0) return "untracked" as const;
   if (quantity === 0) return "out_of_stock" as const;

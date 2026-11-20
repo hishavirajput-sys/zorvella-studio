@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { calculateCartSubtotal, getInventoryStatus, isPurchasableProduct } from "@/lib/store-domain";
+import { calculateCartSubtotal, customerProfileMetadata, getInventoryStatus, isPurchasableProduct } from "@/lib/store-domain";
+
+describe("customer profile", () => {
+  it("stores only the trimmed name alongside the login", () => {
+    expect(customerProfileMetadata("  Shavi Rajput  ")).toEqual({ full_name: "Shavi Rajput" });
+  });
+});
 
 describe("inventory status", () => {
   it("classifies counts at the five-unit low-stock threshold", () => {
