@@ -14,16 +14,514 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      carts: {
+        Row: {
+          created_at: string
+          items: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          items?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          items?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      categories: {
+        Row: {
+          banner_image: string
+          created_at: string
+          description: string
+          id: string
+          is_active: boolean
+          is_demo: boolean
+          is_published: boolean
+          legacy_id: string | null
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          banner_image?: string
+          created_at?: string
+          description?: string
+          id?: string
+          is_active?: boolean
+          is_demo?: boolean
+          is_published?: boolean
+          legacy_id?: string | null
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          banner_image?: string
+          created_at?: string
+          description?: string
+          id?: string
+          is_active?: boolean
+          is_demo?: boolean
+          is_published?: boolean
+          legacy_id?: string | null
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          legacy_id: string | null
+          message: string
+          name: string
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          legacy_id?: string | null
+          message: string
+          name: string
+          status?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          legacy_id?: string | null
+          message?: string
+          name?: string
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      content_pages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          legacy_id: string | null
+          page_key: string
+          status: string
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          id?: string
+          legacy_id?: string | null
+          page_key: string
+          status?: string
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          legacy_id?: string | null
+          page_key?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      customer_addresses: {
+        Row: {
+          address_line_1: string
+          address_line_2: string
+          city: string
+          country: string
+          created_at: string
+          first_name: string
+          id: string
+          is_default: boolean
+          last_name: string
+          legacy_id: string | null
+          postal_code: string
+          region: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address_line_1: string
+          address_line_2?: string
+          city: string
+          country: string
+          created_at?: string
+          first_name: string
+          id?: string
+          is_default?: boolean
+          last_name: string
+          legacy_id?: string | null
+          postal_code: string
+          region: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address_line_1?: string
+          address_line_2?: string
+          city?: string
+          country?: string
+          created_at?: string
+          first_name?: string
+          id?: string
+          is_default?: boolean
+          last_name?: string
+          legacy_id?: string | null
+          postal_code?: string
+          region?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ingredients: {
+        Row: {
+          created_at: string
+          id: string
+          inci: string
+          legacy_id: string | null
+          monograph: string
+          name: string
+          slug: string
+          sort_order: number
+          status: string
+          summary: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          inci?: string
+          legacy_id?: string | null
+          monograph?: string
+          name: string
+          slug: string
+          sort_order?: number
+          status?: string
+          summary?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          inci?: string
+          legacy_id?: string | null
+          monograph?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          status?: string
+          summary?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      inventory_adjustments: {
+        Row: {
+          changed_by: string | null
+          created_at: string
+          id: string
+          product_id: string | null
+          quantity_change: number
+          reason: string
+          variant_id: string
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          product_id?: string | null
+          quantity_change?: number
+          reason?: string
+          variant_id?: string
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          product_id?: string | null
+          quantity_change?: number
+          reason?: string
+          variant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_adjustments_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legacy_user_mappings: {
+        Row: {
+          imported_at: string
+          legacy_user_id: string
+          user_id: string
+        }
+        Insert: {
+          imported_at?: string
+          legacy_user_id: string
+          user_id: string
+        }
+        Update: {
+          imported_at?: string
+          legacy_user_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          contact_email: string
+          created_at: string
+          currency: string
+          id: string
+          idempotency_key: string | null
+          items: Json
+          legacy_id: string | null
+          reference: string
+          shipping_address: Json
+          shipping_status: string
+          status: string
+          status_history: Json
+          subtotal: number
+          tax_status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contact_email: string
+          created_at?: string
+          currency?: string
+          id?: string
+          idempotency_key?: string | null
+          items?: Json
+          legacy_id?: string | null
+          reference: string
+          shipping_address?: Json
+          shipping_status?: string
+          status?: string
+          status_history?: Json
+          subtotal?: number
+          tax_status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contact_email?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          idempotency_key?: string | null
+          items?: Json
+          legacy_id?: string | null
+          reference?: string
+          shipping_address?: Json
+          shipping_status?: string
+          status?: string
+          status_history?: Json
+          subtotal?: number
+          tax_status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          badge: string
+          category_id: string | null
+          category_label: string
+          compare_at_price: number | null
+          created_at: string
+          currency: string
+          description: string
+          id: string
+          images: Json
+          ingredients: string
+          is_active: boolean
+          is_demo: boolean
+          is_published: boolean
+          legacy_id: string | null
+          name: string
+          price: number
+          purchase_available: boolean
+          slug: string
+          sort_order: number
+          specifications: Json
+          updated_at: string
+          usage: string
+          variants: Json
+        }
+        Insert: {
+          badge?: string
+          category_id?: string | null
+          category_label?: string
+          compare_at_price?: number | null
+          created_at?: string
+          currency?: string
+          description?: string
+          id?: string
+          images?: Json
+          ingredients?: string
+          is_active?: boolean
+          is_demo?: boolean
+          is_published?: boolean
+          legacy_id?: string | null
+          name: string
+          price?: number
+          purchase_available?: boolean
+          slug: string
+          sort_order?: number
+          specifications?: Json
+          updated_at?: string
+          usage?: string
+          variants?: Json
+        }
+        Update: {
+          badge?: string
+          category_id?: string | null
+          category_label?: string
+          compare_at_price?: number | null
+          created_at?: string
+          currency?: string
+          description?: string
+          id?: string
+          images?: Json
+          ingredients?: string
+          is_active?: boolean
+          is_demo?: boolean
+          is_published?: boolean
+          legacy_id?: string | null
+          name?: string
+          price?: number
+          purchase_available?: boolean
+          slug?: string
+          sort_order?: number
+          specifications?: Json
+          updated_at?: string
+          usage?: string
+          variants?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      store_settings: {
+        Row: {
+          setting_key: string
+          setting_value: Json
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          setting_key: string
+          setting_value?: Json
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          setting_key?: string
+          setting_value?: Json
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wishlists: {
+        Row: {
+          created_at: string
+          product_ids: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          product_ids?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          product_ids?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +648,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin"],
+    },
   },
 } as const
