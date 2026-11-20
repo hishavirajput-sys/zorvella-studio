@@ -145,7 +145,7 @@
   .store-icon-link svg { width: 17px; height: 17px; stroke-width: 1.55; }
   .store-icon-link:hover { color: var(--moss); }
   .bag-count { position: absolute; top: -1px; right: -2px; min-width: 16px; height: 16px; display: grid; place-items: center; border-radius: 999px; background: var(--moss); color: var(--primary-foreground); font-size: 9px; line-height: 1; }
-  .mobile-menu-trigger { display: none !important; }
+  .store-header-inner > .mobile-menu-trigger { display: none; }
   .store-footer { margin-top: 0; padding: 54px clamp(20px,6vw,78px) 18px; background: var(--espresso); color: var(--ivory); }
   .footer-main { width: min(100%,1280px); margin-inline: auto; padding-bottom: 44px; display: grid; grid-template-columns: 1.65fr 1fr 1fr 1fr; gap: 32px; }
   .footer-brand > .brand-name { color: var(--ivory); font-size: 27px; text-decoration: none; }
@@ -416,7 +416,7 @@
 @media (max-width: 800px) {
   .announcement-bar { font-size: 8px; }
   .store-header-inner { min-height: 64px; grid-template-columns: 39px 1fr 80px; gap: 8px; }
-  .mobile-menu-trigger { display: inline-grid !important; }
+  .store-header-inner > .mobile-menu-trigger { display: inline-grid; }
   .store-header-inner > .brand-lockup { grid-column: 2; grid-row: 1; justify-self: center; }
   .store-header-actions { grid-column: 3; grid-row: 1; gap: 2px; }
   .brand-name { font-size: 21px; }
