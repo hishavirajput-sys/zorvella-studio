@@ -413,6 +413,8 @@
   .inventory-history li time { color: var(--muted-foreground); font-size: 9px; text-align: right; }
 }
 
+.store-header-inner > .mobile-menu-trigger { display: none; }
+
 @media (max-width: 800px) {
   .announcement-bar { font-size: 8px; }
   .store-header-inner { min-height: 64px; grid-template-columns: 39px 1fr 80px; gap: 8px; }
