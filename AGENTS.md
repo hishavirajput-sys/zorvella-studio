@@ -31,3 +31,4 @@ use the editor.
 
 ## External application migrations
 - Keep migrated screens in TanStack Start file routes and shared UI in reusable components, rather than copying the source router, because this project is built on TanStack Start.
+- Keep published, database-backed page-copy reads in `src/lib/page-content.ts` so public pages share one visibility rule.
