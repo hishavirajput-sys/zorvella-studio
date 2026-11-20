@@ -96,7 +96,10 @@ function AdminProductsPage() {
   async function publish(product: typeof products[number]) {
     const hasImage = Array.isArray(product.images) && product.images.some((image) => image && typeof image === "object" && !Array.isArray(image) && typeof image["url"] === "string" && image["url"].startsWith("https://"));
     const hasVariant = Array.isArray(product.variants) && product.variants.some((variant) => variant && typeof variant === "object" && !Array.isArray(variant) && typeof variant["label"] === "string" && typeof variant["price"] === "number" && variant["price"] > 0);
-    if (product.is_demo || !hasImage || !hasVariant) return toast.error("Add an approved product photo, size and price before publishing.");
+    if (product.is_demo || !hasImage || !hasVariant) {
+      toast.error("Add an approved product photo, size and price before publishing.");
+      return;
+    }
     const { error: publishError } = await supabase.from("products").update({ is_active: true, is_published: true, purchase_available: false }).eq("id", product.id);
     if (publishError) toast.error("This listing could not be published.");
     else { toast.success("The listing is visible; checkout stays unavailable until payments are configured."); await queryClient.invalidateQueries(); }
