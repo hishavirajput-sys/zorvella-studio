@@ -8,7 +8,7 @@ import { Storefront } from "@/components/storefront";
 import { supabase } from "@/integrations/supabase/client";
 import { getSignedInUser, saveCustomerAddress } from "@/lib/store-data";
 
-export const Route = createFileRoute("/account")({
+export const Route = createFileRoute("/_authenticated/account")({
   beforeLoad: async () => {
     const user = await getSignedInUser();
     if (!user) throw redirect({ to: "/login" });
