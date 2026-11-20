@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 import { PageHeading, Storefront } from "@/components/storefront";
+import { ThankYouContent } from "@/components/contact-confirmation";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/contact")({
@@ -43,5 +44,3 @@ function ContactPage() {
   }
   return <Storefront><section className="catalog-banner"><PageHeading eyebrow="Here to help" title="We would love to hear from you." description="Write to our customer care team. We will handle your details with care." /></section><section className="simple-page-content"><form className="contact-form" onSubmit={submit}><div className="contact-form-grid"><label className="contact-form-field"><span>Your name</span><input className="store-field" name="name" autoComplete="name" minLength={2} maxLength={120} required /></label><label className="contact-form-field"><span>Email address</span><input className="store-field" name="email" type="email" autoComplete="email" maxLength={254} required /></label><label className="contact-form-field"><span>Subject</span><input className="store-field" name="subject" minLength={3} maxLength={200} required /></label><label className="contact-form-field"><span>Your message</span><textarea className="store-field store-textarea" name="message" minLength={5} maxLength={2000} required /></label></div><button className="store-link address-form-submit" type="submit" disabled={submitting}>{submitting ? "Sending…" : "Send a message"}</button>{error && <p className="auth-error" role="alert">{error}</p>}<p className="account-lead">Messages are stored securely for the store team. A live email notification service is not configured yet.</p></form></section></Storefront>;
 }
-
-export function ThankYouContent() { return <section className="simple-page-content"><PageHeading eyebrow="Thank you" title="Your message has reached us." description="We appreciate you taking the time to get in touch with ZORVELLAE." /><div className="checkout-placeholder"><Link to="/" className="store-link">Return to ZORVELLAE</Link></div></section>; }

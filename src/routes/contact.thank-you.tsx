@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Storefront } from "@/components/storefront";
-import { ThankYouContent } from "@/routes/contact";
+import { ThankYouContent } from "@/components/contact-confirmation";
 
 export const Route = createFileRoute("/contact/thank-you")({
   head: () => ({ meta: [

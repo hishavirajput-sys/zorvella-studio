@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/components/storefront";
-import { AdminGate } from "@/routes/admin";
+import { AdminGate } from "@/components/admin";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 

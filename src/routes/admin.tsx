@@ -1,10 +1,5 @@
 import { createFileRoute, Link, Outlet, redirect, useLocation } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
-import { ShieldAlert } from "lucide-react";
-
 import { Storefront } from "@/components/storefront";
-import { supabase } from "@/integrations/supabase/client";
-import type { ReactNode } from "react";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
@@ -45,28 +40,4 @@ const navigation = [
 export function AdminLayout() {
   const location = useLocation();
   return <Storefront><section className="admin-layout"><span className="eyebrow">ZORVELLAE · Store studio</span><div className="admin-toolbar"><h1>Thoughtful store management.</h1></div><nav className="admin-nav" aria-label="Store administration">{navigation.map(({ path, label }) => <Link to={path} key={path} aria-current={location.pathname === path ? "page" : undefined}>{label}</Link>)}</nav><Outlet /></section></Storefront>;
-}
-
-export function AdminGate({ children }: { children: ReactNode }) {
-  const [allowed, setAllowed] = useState<boolean | null>(null);
-  useEffect(() => {
-    let active = true;
-    void supabase.auth.getUser().then(async ({ data, error }) => {
-      if (!data.user || error) {
-        if (active) setAllowed(false);
-        return;
-      }
-      const { data: role, error: roleError } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", data.user.id)
-        .eq("role", "admin")
-        .maybeSingle();
-      if (active) setAllowed(Boolean(role) && !roleError);
-    });
-    return () => { active = false; };
-  }, []);
-  if (allowed === null) return <p className="loading-note" role="status">Checking store access…</p>;
-  if (!allowed) return <div className="admin-denied"><ShieldAlert size={28} aria-hidden="true" /><h2>Store management is restricted.</h2><p>This account does not have permission to manage the store.</p><Link to="/" className="store-link">Return to the shop</Link></div>;
-  return children;
 }

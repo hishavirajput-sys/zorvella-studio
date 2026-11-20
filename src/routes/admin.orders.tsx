@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { AdminGate } from "@/routes/admin";
+import { AdminGate } from "@/components/admin";
 import { supabase } from "@/integrations/supabase/client";
 import { formatPrice } from "@/lib/store-domain";
 
