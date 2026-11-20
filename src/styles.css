@@ -313,6 +313,7 @@
   .account-layout { width: min(100%,1160px); margin: 0 auto; padding: 46px clamp(18px,5vw,56px) 75px; display: grid; grid-template-columns: 210px minmax(0,1fr); gap: clamp(28px,5vw,60px); }
   .account-aside { padding-right: 20px; display: flex; flex-direction: column; gap: 6px; border-right: 1px solid var(--line); }
   .account-aside > .eyebrow { margin-bottom: 8px; }
+  .account-aside > button { justify-content: flex-start; font-size: 11px; }
   .account-aside > a { padding: 9px 8px; color: var(--muted-foreground); font-size: 11px; text-decoration: none; }
   .account-aside > a:hover,.account-aside > a[aria-current="page"] { background: var(--stone); color: var(--espresso); }
   .account-panel { min-width: 0; }
@@ -327,11 +328,20 @@
   .address-card p,.order-list p { margin: 0; font-size: 11px; line-height: 1.8; }
   .address-form { margin-top: 19px; padding-top: 18px; border-top: 1px solid var(--line); }
   .address-form-grid,.contact-form-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 11px; }
+  .address-fields { margin-top: 13px; }
   .address-form-field,.contact-form-field { min-width: 0; display: flex; flex-direction: column; gap: 5px; }
   .address-form-field > label,.contact-form-field > label { color: var(--espresso); font-size: 9px; font-weight: 500; }
   .address-form-submit { margin-top: 13px; }
   .form-span-two { grid-column: 1/-1; }
   .order-list > a { padding: 15px 0; display: flex; justify-content: space-between; gap: 15px; border-bottom: 1px solid var(--line); font-size: 11px; text-decoration: none; }
+  .order-return { margin-bottom: 14px; }
+  .product-details-copy > details { padding-block: 13px; border-bottom: 1px solid var(--line); }
+  .product-details-copy > details:first-of-type { margin-top: 24px; border-top: 1px solid var(--line); }
+  .product-details-copy > details > summary { display: flex; justify-content: space-between; cursor: pointer; color: var(--espresso); font-family: var(--font-editorial); font-size: 15px; list-style: none; }
+  .product-details-copy > details > summary::-webkit-details-marker { display: none; }
+  .product-details-copy > details > p { margin-top: 9px; color: var(--muted-foreground); font-size: 10px; line-height: 1.7; }
+  .product-details-copy > .wishlist-action { position: static; width: auto; height: 36px; margin-top: 13px; border-color: var(--line); font-size: 10px; }
+  .availability-note > svg { margin-right: 5px; vertical-align: middle; }
   .simple-page-content { width: min(100%,980px); margin-inline: auto; padding: 44px clamp(18px,5vw,55px) 82px; }
   .article-grid { width: min(100%,1100px); margin: 23px auto 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; }
   .article-item { padding: 17px; border: 1px solid var(--line); background: var(--surface-raised); }
@@ -457,6 +467,7 @@
   .account-layout { padding: 28px 15px 50px; grid-template-columns: 1fr; gap: 25px; }
   .account-aside { padding: 0 0 9px; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 4px; border-right: 0; border-bottom: 1px solid var(--line); }
   .account-aside > .eyebrow { grid-column: 1/-1; }
+  .account-aside > button { justify-content: center; font-size: 9px; }
   .account-aside > a { min-height: 36px; padding: 8px 5px; font-size: 9px; text-align: center; }
   .account-panel h1 { font-size: 34px; }
   .address-form-grid,.contact-form-grid { grid-template-columns: 1fr; }
