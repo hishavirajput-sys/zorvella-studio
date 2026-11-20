@@ -78,8 +78,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     };
 
     void supabase.auth.getUser().then(({ data, error }) => {
-      if (error) toast.error("Sign-in status could not be checked.");
-      void loadCart(data.user?.id ?? null);
+      void loadCart(error ? null : data.user?.id ?? null);
     });
 
     const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
