@@ -1,4 +1,5 @@
 import { createFileRoute, Link, Outlet, redirect, useLocation } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
 import { Storefront } from "@/components/storefront";
 
 export const Route = createFileRoute("/admin")({

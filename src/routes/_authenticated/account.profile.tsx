@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_authenticated/account/profile")({
 function ProfilePage() {
   const [profile, setProfile] = useState({ name: "", email: "" });
   useEffect(() => {
-    void supabase.auth.getUser().then(({ data }) => setProfile({ name: typeof data.user?.user_metadata.full_name === "string" ? data.user.user_metadata.full_name : "Customer", email: data.user?.email ?? "" }));
+    void supabase.auth.getUser().then(({ data }) => setProfile({ name: typeof data.user?.user_metadata["full_name"] === "string" ? data.user.user_metadata["full_name"] : "Customer", email: data.user?.email ?? "" }));
   }, []);
   return <><h1>Your profile</h1><p className="account-lead">Customer account details.</p><div className="account-data-row"><span><strong>Name</strong><small>{profile.name}</small></span></div><div className="account-data-row"><span><strong>Email address</strong><small>{profile.email}</small></span></div><p className="account-lead">Your customer profile is linked to your verified login. Sign in with another email to change accounts.</p></>;
 }

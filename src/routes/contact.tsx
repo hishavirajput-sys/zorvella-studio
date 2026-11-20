@@ -1,9 +1,8 @@
 import { useState, type FormEvent } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 import { PageHeading, Storefront } from "@/components/storefront";
-import { ThankYouContent } from "@/components/contact-confirmation";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/contact")({
@@ -25,11 +24,11 @@ function ContactPage() {
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
-    const values = Object.fromEntries(new FormData(form));
-    const name = String(values.name ?? "").trim();
-    const email = String(values.email ?? "").trim();
-    const subject = String(values.subject ?? "").trim();
-    const message = String(values.message ?? "").trim();
+    const values = new FormData(form);
+    const name = String(values.get("name") ?? "").trim();
+    const email = String(values.get("email") ?? "").trim();
+    const subject = String(values.get("subject") ?? "").trim();
+    const message = String(values.get("message") ?? "").trim();
     if (name.length < 2 || name.length > 120 || !email || email.length > 254 || subject.length < 3 || subject.length > 200 || message.length < 5 || message.length > 2000) return setError("Please complete each field within the stated limits.");
     setSubmitting(true);
     setError("");

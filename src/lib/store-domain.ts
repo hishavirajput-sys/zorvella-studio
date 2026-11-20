@@ -16,7 +16,7 @@ export function productStartingPrice(product: StoreProduct) {
   const variants = Array.isArray(product.variants) ? product.variants : [];
   const amounts = variants.flatMap((variant) => {
     if (!variant || typeof variant !== "object" || Array.isArray(variant)) return [];
-    const price = variant.price;
+    const price = variant["price"];
     return typeof price === "number" ? [price] : [];
   });
   return amounts.length > 0 ? Math.min(...amounts) : product.price;
@@ -28,9 +28,9 @@ export function calculateCartSubtotal(items: CartItem[], products: StoreProduct[
     if (!product || !isPurchasableProduct(product)) return subtotal;
     const variants = Array.isArray(product.variants) ? product.variants : [];
     const variant = variants.find(
-      (entry) => entry && typeof entry === "object" && !Array.isArray(entry) && entry.id === item.variantId,
+      (entry) => entry && typeof entry === "object" && !Array.isArray(entry) && entry["id"] === item.variantId,
     );
-    const price = variant && typeof variant === "object" && !Array.isArray(variant) ? variant.price : null;
+    const price = variant && typeof variant === "object" && !Array.isArray(variant) ? variant["price"] : null;
     return subtotal + (typeof price === "number" && item.quantity > 0 ? price * item.quantity : 0);
   }, 0);
 }

@@ -34,8 +34,13 @@ function getOrderItems(value: Json): OrderItem[] {
   if (!Array.isArray(value)) return [];
   return value.flatMap((entry) => {
     if (typeof entry !== "object" || entry === null || Array.isArray(entry)) return [];
-    if (typeof entry.productName !== "string" || typeof entry.variantLabel !== "string" || typeof entry.quantity !== "number" || typeof entry.unitPrice !== "number" || typeof entry.lineTotal !== "number") return [];
-    return [{ productName: entry.productName, variantLabel: entry.variantLabel, quantity: entry.quantity, unitPrice: entry.unitPrice, lineTotal: entry.lineTotal }];
+    const productName = entry["productName"];
+    const variantLabel = entry["variantLabel"];
+    const quantity = entry["quantity"];
+    const unitPrice = entry["unitPrice"];
+    const lineTotal = entry["lineTotal"];
+    if (typeof productName !== "string" || typeof variantLabel !== "string" || typeof quantity !== "number" || typeof unitPrice !== "number" || typeof lineTotal !== "number") return [];
+    return [{ productName, variantLabel, quantity, unitPrice, lineTotal }];
   });
 }
 

@@ -29,15 +29,15 @@ function AddressesPage() {
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
-    const values = Object.fromEntries(new FormData(form));
-    const first_name = String(values.first_name ?? "").trim();
-    const last_name = String(values.last_name ?? "").trim();
-    const address_line_1 = String(values.address_line_1 ?? "").trim();
-    const address_line_2 = String(values.address_line_2 ?? "").trim();
-    const city = String(values.city ?? "").trim();
-    const region = String(values.region ?? "").trim();
-    const postal_code = String(values.postal_code ?? "").trim();
-    const country = String(values.country ?? "").trim();
+    const values = new FormData(form);
+    const first_name = String(values.get("first_name") ?? "").trim();
+    const last_name = String(values.get("last_name") ?? "").trim();
+    const address_line_1 = String(values.get("address_line_1") ?? "").trim();
+    const address_line_2 = String(values.get("address_line_2") ?? "").trim();
+    const city = String(values.get("city") ?? "").trim();
+    const region = String(values.get("region") ?? "").trim();
+    const postal_code = String(values.get("postal_code") ?? "").trim();
+    const country = String(values.get("country") ?? "").trim();
     if ([first_name,last_name,address_line_1,city,region,postal_code,country].some((value) => !value)) return setError("Fill in the required delivery details.");
     setLoading(true);
     setError("");
