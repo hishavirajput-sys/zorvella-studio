@@ -1,7 +1,8 @@
 # Migration roadmap
 
-- [ ] Rebuild the ZORVELLAE storefront and customer journey in TanStack Start; homepage, shop, category, product, cart, sign-in and registration are underway.
-- [x] Recreate the original data schema and secure customer/admin access in Lovable Cloud.
-- [ ] Request/import original MongoDB records and user identities; no data export is bundled.
-- [ ] Recreate admin store-management pages and verify permissions.
-- [ ] Verify the preview and record remaining blocked items in the migration ledger.
+- [x] Recreate the ZORVELLAE storefront, customer account pages, and Cloud-backed store-management screens in TanStack Start; keep checkout unavailable because the source has no persistent payment flow.
+- [x] Migrate the store data schema, customer-only records, separate manager roles, and protected management operations to Lovable Cloud.
+- [ ] Import and verify original MongoDB records and customer identities; no export is bundled.
+- [ ] Verify manager-only pages and controls after the owner provides the exact verified sign-in email; no role has been assigned.
+- [x] Run typecheck, project tests, public route checks, responsive-width checks, and a signed-in address create/read/delete flow; retain remaining blockers in the migration ledger.
+- [ ] Review and accept the preview cutover after original data and manager access are addressed.
