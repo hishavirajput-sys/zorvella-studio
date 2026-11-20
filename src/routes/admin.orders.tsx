@@ -33,7 +33,7 @@ function OrdersAdminPage() {
     return data;
   } });
   async function changeStatus(id: string, status: typeof statuses[number]) {
-    const { error } = await supabase.from("orders").update({ status, status_history: [{ status, changedAt: new Date().toISOString() }] }).eq("id", id);
+    const { error } = await supabase.rpc("update_order_status", { p_order_id: id, p_status: status });
     if (error) {
       toast.error("Order status could not be updated.");
     } else {

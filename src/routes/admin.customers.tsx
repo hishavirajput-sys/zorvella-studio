@@ -35,6 +35,7 @@ function CustomersPage() {
   } });
   const filteredMappings = mappings.filter((mapping) => mapping.legacy_user_id.toLowerCase().includes(search.trim().toLowerCase()));
   async function removeMapping(userId: string) {
+    if (!window.confirm("Unlink this imported customer identity? This does not delete the customer account.")) return;
     const { error } = await supabase.from("legacy_user_mappings").delete().eq("user_id", userId);
     if (error) toast.error("This legacy account link could not be removed.");
     else { toast.success("Legacy account link removed."); await queryClient.invalidateQueries({ queryKey: ["admin", "customers"] }); }

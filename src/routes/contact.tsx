@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { PageHeading, Storefront } from "@/components/storefront";
@@ -14,10 +15,21 @@ export const Route = createFileRoute("/contact")({
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
+  loader: ({ context }) => context.queryClient.ensureQueryData({ queryKey: ["store", "public-contact"], queryFn: async () => {
+    const { data, error } = await supabase.from("store_settings").select("setting_value").eq("setting_key", "public.contact").maybeSingle();
+    if (error) throw error;
+    return data?.setting_value ?? null;
+  } }),
   component: ContactPage,
 });
 
 function ContactPage() {
+  const { data: contactDetails } = useSuspenseQuery({ queryKey: ["store", "public-contact"], queryFn: async () => {
+    const { data, error } = await supabase.from("store_settings").select("setting_value").eq("setting_key", "public.contact").maybeSingle();
+    if (error) throw error;
+    return data?.setting_value ?? null;
+  } });
+  const contact = contactDetails && typeof contactDetails === "object" && !Array.isArray(contactDetails) ? contactDetails : null;
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
@@ -41,5 +53,5 @@ function ContactPage() {
     toast.success("Your message was received.");
     await navigate({ to: "/contact/thank-you" });
   }
-  return <Storefront><section className="catalog-banner"><PageHeading eyebrow="Here to help" title="We would love to hear from you." description="Write to our customer care team. We will handle your details with care." /></section><section className="simple-page-content"><form className="contact-form" onSubmit={submit}><div className="contact-form-grid"><label className="contact-form-field"><span>Your name</span><input className="store-field" name="name" autoComplete="name" minLength={2} maxLength={120} required /></label><label className="contact-form-field"><span>Email address</span><input className="store-field" name="email" type="email" autoComplete="email" maxLength={254} required /></label><label className="contact-form-field"><span>Subject</span><input className="store-field" name="subject" minLength={3} maxLength={200} required /></label><label className="contact-form-field"><span>Your message</span><textarea className="store-field store-textarea" name="message" minLength={5} maxLength={2000} required /></label></div><button className="store-link address-form-submit" type="submit" disabled={submitting}>{submitting ? "Sending…" : "Send a message"}</button>{error && <p className="auth-error" role="alert">{error}</p>}<p className="account-lead">Messages are stored securely for the store team. A live email notification service is not configured yet.</p></form></section></Storefront>;
+  return <Storefront><section className="catalog-banner"><PageHeading eyebrow="Here to help" title="We would love to hear from you." description="Write to our customer care team. We will handle your details with care." /></section><section className="simple-page-content">{contact && (typeof contact["email"] === "string" || typeof contact["phone"] === "string") && <p className="account-lead">{typeof contact["email"] === "string" && <a href={`mailto:${contact["email"]}`}>{contact["email"]}</a>}{typeof contact["email"] === "string" && typeof contact["phone"] === "string" ? " · " : ""}{typeof contact["phone"] === "string" && <a href={`tel:${contact["phone"]}`}>{contact["phone"]}</a>}</p>}<form className="contact-form" onSubmit={submit}><div className="contact-form-grid"><label className="contact-form-field"><span>Your name</span><input className="store-field" name="name" autoComplete="name" minLength={2} maxLength={120} required /></label><label className="contact-form-field"><span>Email address</span><input className="store-field" name="email" type="email" autoComplete="email" maxLength={254} required /></label><label className="contact-form-field"><span>Subject</span><input className="store-field" name="subject" minLength={3} maxLength={200} required /></label><label className="contact-form-field"><span>Your message</span><textarea className="store-field store-textarea" name="message" minLength={5} maxLength={2000} required /></label></div><button className="store-link address-form-submit" type="submit" disabled={submitting}>{submitting ? "Sending…" : "Send a message"}</button>{error && <p className="auth-error" role="alert">{error}</p>}<p className="account-lead">Messages are stored securely for the store team. A live email notification service is not configured yet.</p></form></section></Storefront>;
 }

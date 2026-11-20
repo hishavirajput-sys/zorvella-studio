@@ -58,10 +58,11 @@ function SettingsPage() {
     for (const [label, value] of [["Tax", settingsValue.taxConfiguration.ratePercent], ["Shipping", settingsValue.shippingConfiguration.flatRate]]) {
       if (value && (!Number.isFinite(Number(value)) || Number(value) < 0)) return setError(`${label} must be a non-negative amount.`);
     }
-    const { error: saveError } = await supabase.from("store_settings").upsert({ setting_key: "store.configuration", setting_value: settingsValue });
+    const { error: saveError } = await supabase.from("store_settings").upsert([
+      { setting_key: "store.configuration", setting_value: settingsValue },
+      { setting_key: "public.contact", setting_value: { email: contactEmail || null, phone: settingsValue.supportPhone || null, storeName: settingsValue.storeName || null } },
+    ]);
     if (saveError) return setError("The contact details could not be saved.");
-    const { error: publicSaveError } = await supabase.from("store_settings").upsert({ setting_key: "public.contact", setting_value: { email: contactEmail || null, phone: settingsValue.supportPhone || null, storeName: settingsValue.storeName || null } });
-    if (publicSaveError) return setError("Store settings were saved, but public contact details could not be updated.");
     setError("");
     toast.success("Public customer-care details updated.");
     await queryClient.invalidateQueries({ queryKey: ["admin", "store-settings"] });
