@@ -8,6 +8,14 @@ import { AdminGate } from "@/components/admin";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/admin/ingredients")({
+  head: () => ({ meta: [
+    { title: "Ingredient Monographs — ZORVELLAE" },
+    { name: "description", content: "Review and prepare ingredient monographs for ZORVELLAE." },
+    { property: "og:title", content: "Ingredient Monographs — ZORVELLAE" },
+    { property: "og:description", content: "Manage approved ingredient information for ZORVELLAE." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   loader: ({ context }) => context.queryClient.ensureQueryData({ queryKey: ["admin", "ingredients"], queryFn: async () => {
     const { data, error } = await supabase.from("ingredients").select("id,name,inci,slug,summary,status").order("sort_order");
     if (error) throw error;

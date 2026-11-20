@@ -8,6 +8,14 @@ import { AdminGate } from "@/components/admin";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/admin/content")({
+  head: () => ({ meta: [
+    { title: "Store Content — ZORVELLAE" },
+    { name: "description", content: "Review and prepare approved ZORVELLAE store content." },
+    { property: "og:title", content: "Store Content — ZORVELLAE" },
+    { property: "og:description", content: "Manage published pages for the ZORVELLAE storefront." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   loader: ({ context }) => context.queryClient.ensureQueryData({ queryKey: ["admin", "content"], queryFn: async () => {
     const { data, error } = await supabase.from("content_pages").select("id,page_key,title,body,status,updated_at").order("page_key");
     if (error) throw error;

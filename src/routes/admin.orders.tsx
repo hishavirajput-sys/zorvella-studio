@@ -7,6 +7,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatPrice } from "@/lib/store-domain";
 
 export const Route = createFileRoute("/admin/orders")({
+  head: () => ({ meta: [
+    { title: "Customer Orders — ZORVELLAE" },
+    { name: "description", content: "Review and update ZORVELLAE customer order records." },
+    { property: "og:title", content: "Customer Orders — ZORVELLAE" },
+    { property: "og:description", content: "Manage customer order records for ZORVELLAE." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   loader: ({ context }) => context.queryClient.ensureQueryData({ queryKey: ["admin", "orders"], queryFn: async () => {
     const { data, error } = await supabase.from("orders").select("id, reference, contact_email, status, subtotal, currency, created_at").order("created_at", { ascending: false });
     if (error) throw error;

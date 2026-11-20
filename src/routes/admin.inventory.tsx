@@ -5,6 +5,14 @@ import { AdminGate } from "@/components/admin";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/admin/inventory")({
+  head: () => ({ meta: [
+    { title: "Inventory Activity — ZORVELLAE" },
+    { name: "description", content: "Review inventory adjustments for ZORVELLAE formulations." },
+    { property: "og:title", content: "Inventory Activity — ZORVELLAE" },
+    { property: "og:description", content: "Review formulation inventory updates." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   loader: ({ context }) => context.queryClient.ensureQueryData({ queryKey: ["admin", "inventory"], queryFn: async () => {
     const { data, error } = await supabase.from("inventory_adjustments").select("id, product_id, variant_id, quantity_change, reason, changed_by, created_at, products(name)").order("created_at", { ascending: false });
     if (error) throw error;

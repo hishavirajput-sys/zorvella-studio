@@ -10,6 +10,14 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/admin/products")({
+  head: () => ({ meta: [
+    { title: "Product Listings — ZORVELLAE" },
+    { name: "description", content: "Review and manage approved product listings for the ZORVELLAE store." },
+    { property: "og:title", content: "Product Listings — ZORVELLAE" },
+    { property: "og:description", content: "Manage product listings for ZORVELLAE." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   loader: ({ context }) => context.queryClient.ensureQueryData({ queryKey: ["admin", "products"], queryFn: async () => {
     const { data, error } = await supabase.from("products").select("id, name, slug, price, currency, is_published, purchase_available, is_demo, variants").order("sort_order");
     if (error) throw error;
@@ -25,7 +33,7 @@ function AdminProductsPage() {
     if (error) throw error;
     return data;
   } });
-  const { data: categories } = useSuspenseQuery({ queryKey: ["store", "categories"], queryFn: async () => {
+  const { data: categories } = useSuspenseQuery({ queryKey: ["admin", "categories"], queryFn: async () => {
     const { data, error } = await supabase.from("categories").select("id,name,slug").order("sort_order");
     if (error) throw error;
     return data;

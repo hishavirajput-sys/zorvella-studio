@@ -7,6 +7,14 @@ import { AdminGate } from "@/components/admin";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/admin/contact-messages")({
+  head: () => ({ meta: [
+    { title: "Customer Messages — ZORVELLAE" },
+    { name: "description", content: "Review and organize customer messages sent to ZORVELLAE." },
+    { property: "og:title", content: "Customer Messages — ZORVELLAE" },
+    { property: "og:description", content: "Manage customer-care enquiries for ZORVELLAE." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   loader: ({ context }) => context.queryClient.ensureQueryData({ queryKey: ["admin", "contact-messages"], queryFn: async () => {
     const { data, error } = await supabase.from("contact_messages").select("id, name, email, subject, message, status, created_at").order("created_at", { ascending: false });
     if (error) throw error;

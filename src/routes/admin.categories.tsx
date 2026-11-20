@@ -8,6 +8,14 @@ import { AdminGate } from "@/components/admin";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/admin/categories")({
+  head: () => ({ meta: [
+    { title: "Product Categories — ZORVELLAE" },
+    { name: "description", content: "Review and prepare product categories for the ZORVELLAE storefront." },
+    { property: "og:title", content: "Product Categories — ZORVELLAE" },
+    { property: "og:description", content: "Manage the product categories shown in the ZORVELLAE shop." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   loader: ({ context }) => context.queryClient.ensureQueryData({ queryKey: ["admin", "categories"], queryFn: async () => {
     const { data, error } = await supabase.from("categories").select("*").order("sort_order");
     if (error) throw error;
