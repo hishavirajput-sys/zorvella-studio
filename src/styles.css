@@ -396,8 +396,8 @@
   .admin-settings-notice h3 { margin: 0; font-size: 21px; }
   .admin-settings-notice p { color: var(--muted-foreground); font-size: 11px; line-height: 1.7; }
 }
-+
-+@media (max-width: 800px) {
+
+@media (max-width: 800px) {
   .announcement-bar { font-size: 8px; }
   .store-header-inner { min-height: 64px; grid-template-columns: 39px 1fr 80px; gap: 8px; }
   .mobile-menu-trigger { display: inline-grid; }
@@ -429,8 +429,8 @@
   .footer-brand { grid-column: 1/-1; }
   .routine-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
-+
-+@media (max-width: 560px) {
+
+@media (max-width: 560px) {
   .announcement-bar { justify-content: center; padding-inline: 10px; }
   .home-copy { padding: 37px 19px; }
   .home-title { margin-top: 16px; font-size: 44px; }
@@ -509,7 +509,7 @@
   .admin-metric { min-height: 82px; padding: 12px; }
   .admin-table { min-width: 610px; }
 }
-+
-+@media (prefers-reduced-motion: reduce) {
+
+@media (prefers-reduced-motion: reduce) {
   *,*::before,*::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
