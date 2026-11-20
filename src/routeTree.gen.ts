@@ -11,11 +11,20 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as CartRouteImport } from './routes/cart'
+import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as IngredientsRouteImport } from './routes/ingredients'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as OurScienceRouteImport } from './routes/our-science'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as RoutinesRouteImport } from './routes/routines'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as SkinConcernsRouteImport } from './routes/skin-concerns'
+import { Route as WishlistRouteImport } from './routes/wishlist'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
+import { Route as ContactThankYouRouteImport } from './routes/contact.thank-you'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
 import { Route as AuthenticatedAccountAddressesRouteImport } from './routes/_authenticated/account.addresses'
 import { Route as AuthenticatedAccountOrdersRouteImport } from './routes/_authenticated/account.orders'
@@ -32,9 +41,29 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CartRoute = CartRouteImport.update({
   id: '/cart',
   path: '/cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IngredientsRoute = IngredientsRouteImport.update({
+  id: '/ingredients',
+  path: '/ingredients',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -42,9 +71,19 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OurScienceRoute = OurScienceRouteImport.update({
+  id: '/our-science',
+  path: '/our-science',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RoutinesRoute = RoutinesRouteImport.update({
+  id: '/routines',
+  path: '/routines',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShopRoute = ShopRouteImport.update({
@@ -52,10 +91,25 @@ const ShopRoute = ShopRouteImport.update({
   path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SkinConcernsRoute = SkinConcernsRouteImport.update({
+  id: '/skin-concerns',
+  path: '/skin-concerns',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WishlistRoute = WishlistRouteImport.update({
+  id: '/wishlist',
+  path: '/wishlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
   id: '/account',
   path: '/account',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ContactThankYouRoute = ContactThankYouRouteImport.update({
+  id: '/thank-you',
+  path: '/thank-you',
+  getParentRoute: () => ContactRoute,
 } as any)
 const ProductSlugRoute = ProductSlugRouteImport.update({
   id: '/product/$slug',
@@ -94,11 +148,20 @@ const AuthenticatedAccountOrdersOrderIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/cart': typeof CartRoute
+  '/checkout': typeof CheckoutRoute
+  '/contact': typeof ContactRouteWithChildren
+  '/ingredients': typeof IngredientsRoute
   '/login': typeof LoginRoute
+  '/our-science': typeof OurScienceRoute
   '/register': typeof RegisterRoute
+  '/routines': typeof RoutinesRoute
   '/shop': typeof ShopRouteWithChildren
+  '/skin-concerns': typeof SkinConcernsRoute
+  '/wishlist': typeof WishlistRoute
   '/account': typeof AuthenticatedAccountRouteWithChildren
+  '/contact/thank-you': typeof ContactThankYouRoute
   '/product/$slug': typeof ProductSlugRoute
   '/account/addresses': typeof AuthenticatedAccountAddressesRoute
   '/account/orders': typeof AuthenticatedAccountOrdersRouteWithChildren
@@ -108,11 +171,20 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/cart': typeof CartRoute
+  '/checkout': typeof CheckoutRoute
+  '/contact': typeof ContactRouteWithChildren
+  '/ingredients': typeof IngredientsRoute
   '/login': typeof LoginRoute
+  '/our-science': typeof OurScienceRoute
   '/register': typeof RegisterRoute
+  '/routines': typeof RoutinesRoute
   '/shop': typeof ShopRouteWithChildren
+  '/skin-concerns': typeof SkinConcernsRoute
+  '/wishlist': typeof WishlistRoute
   '/account': typeof AuthenticatedAccountRouteWithChildren
+  '/contact/thank-you': typeof ContactThankYouRoute
   '/product/$slug': typeof ProductSlugRoute
   '/account/addresses': typeof AuthenticatedAccountAddressesRoute
   '/account/orders': typeof AuthenticatedAccountOrdersRouteWithChildren
@@ -124,11 +196,20 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/about': typeof AboutRoute
   '/cart': typeof CartRoute
+  '/checkout': typeof CheckoutRoute
+  '/contact': typeof ContactRouteWithChildren
+  '/ingredients': typeof IngredientsRoute
   '/login': typeof LoginRoute
+  '/our-science': typeof OurScienceRoute
   '/register': typeof RegisterRoute
+  '/routines': typeof RoutinesRoute
   '/shop': typeof ShopRouteWithChildren
+  '/skin-concerns': typeof SkinConcernsRoute
+  '/wishlist': typeof WishlistRoute
   '/_authenticated/account': typeof AuthenticatedAccountRouteWithChildren
+  '/contact/thank-you': typeof ContactThankYouRoute
   '/product/$slug': typeof ProductSlugRoute
   '/_authenticated/account/addresses': typeof AuthenticatedAccountAddressesRoute
   '/_authenticated/account/orders': typeof AuthenticatedAccountOrdersRouteWithChildren
@@ -140,11 +221,20 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/cart'
+    | '/checkout'
+    | '/contact'
+    | '/ingredients'
     | '/login'
+    | '/our-science'
     | '/register'
+    | '/routines'
     | '/shop'
+    | '/skin-concerns'
+    | '/wishlist'
     | '/account'
+    | '/contact/thank-you'
     | '/product/$slug'
     | '/account/addresses'
     | '/account/orders'
@@ -154,11 +244,20 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/cart'
+    | '/checkout'
+    | '/contact'
+    | '/ingredients'
     | '/login'
+    | '/our-science'
     | '/register'
+    | '/routines'
     | '/shop'
+    | '/skin-concerns'
+    | '/wishlist'
     | '/account'
+    | '/contact/thank-you'
     | '/product/$slug'
     | '/account/addresses'
     | '/account/orders'
@@ -169,11 +268,20 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/about'
     | '/cart'
+    | '/checkout'
+    | '/contact'
+    | '/ingredients'
     | '/login'
+    | '/our-science'
     | '/register'
+    | '/routines'
     | '/shop'
+    | '/skin-concerns'
+    | '/wishlist'
     | '/_authenticated/account'
+    | '/contact/thank-you'
     | '/product/$slug'
     | '/_authenticated/account/addresses'
     | '/_authenticated/account/orders'
@@ -185,10 +293,18 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AboutRoute: typeof AboutRoute
   CartRoute: typeof CartRoute
+  CheckoutRoute: typeof CheckoutRoute
+  ContactRoute: typeof ContactRouteWithChildren
+  IngredientsRoute: typeof IngredientsRoute
   LoginRoute: typeof LoginRoute
+  OurScienceRoute: typeof OurScienceRoute
   RegisterRoute: typeof RegisterRoute
+  RoutinesRoute: typeof RoutinesRoute
   ShopRoute: typeof ShopRouteWithChildren
+  SkinConcernsRoute: typeof SkinConcernsRoute
+  WishlistRoute: typeof WishlistRoute
   ProductSlugRoute: typeof ProductSlugRoute
 }
 
@@ -208,11 +324,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cart': {
       id: '/cart'
       path: '/cart'
       fullPath: '/cart'
       preLoaderRoute: typeof CartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ingredients': {
+      id: '/ingredients'
+      path: '/ingredients'
+      fullPath: '/ingredients'
+      preLoaderRoute: typeof IngredientsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -222,11 +366,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/our-science': {
+      id: '/our-science'
+      path: '/our-science'
+      fullPath: '/our-science'
+      preLoaderRoute: typeof OurScienceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/register': {
       id: '/register'
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/routines': {
+      id: '/routines'
+      path: '/routines'
+      fullPath: '/routines'
+      preLoaderRoute: typeof RoutinesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shop': {
@@ -236,12 +394,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/skin-concerns': {
+      id: '/skin-concerns'
+      path: '/skin-concerns'
+      fullPath: '/skin-concerns'
+      preLoaderRoute: typeof SkinConcernsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wishlist': {
+      id: '/wishlist'
+      path: '/wishlist'
+      fullPath: '/wishlist'
+      preLoaderRoute: typeof WishlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/account': {
       id: '/_authenticated/account'
       path: '/account'
       fullPath: '/account'
       preLoaderRoute: typeof AuthenticatedAccountRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/contact/thank-you': {
+      id: '/contact/thank-you'
+      path: '/thank-you'
+      fullPath: '/contact/thank-you'
+      preLoaderRoute: typeof ContactThankYouRouteImport
+      parentRoute: typeof ContactRoute
     }
     '/product/$slug': {
       id: '/product/$slug'
@@ -329,6 +508,17 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface ContactRouteChildren {
+  ContactThankYouRoute: typeof ContactThankYouRoute
+}
+
+const ContactRouteChildren: ContactRouteChildren = {
+  ContactThankYouRoute: ContactThankYouRoute,
+}
+
+const ContactRouteWithChildren =
+  ContactRoute._addFileChildren(ContactRouteChildren)
+
 interface ShopRouteChildren {
   ShopCategorySlugRoute: typeof ShopCategorySlugRoute
 }
@@ -342,10 +532,18 @@ const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AboutRoute: AboutRoute,
   CartRoute: CartRoute,
+  CheckoutRoute: CheckoutRoute,
+  ContactRoute: ContactRouteWithChildren,
+  IngredientsRoute: IngredientsRoute,
   LoginRoute: LoginRoute,
+  OurScienceRoute: OurScienceRoute,
   RegisterRoute: RegisterRoute,
+  RoutinesRoute: RoutinesRoute,
   ShopRoute: ShopRouteWithChildren,
+  SkinConcernsRoute: SkinConcernsRoute,
+  WishlistRoute: WishlistRoute,
   ProductSlugRoute: ProductSlugRoute,
 }
 export const routeTree = rootRouteImport
