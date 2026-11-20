@@ -1,6 +1,7 @@
 import { createFileRoute, Link, Outlet, redirect, useLocation } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Storefront } from "@/components/storefront";
+import { AdminGate } from "@/components/admin";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
@@ -40,5 +41,5 @@ const navigation = [
 
 export function AdminLayout() {
   const location = useLocation();
-  return <Storefront><section className="admin-layout"><span className="eyebrow">ZORVELLAE · Store studio</span><div className="admin-toolbar"><h1>Thoughtful store management.</h1></div><nav className="admin-nav" aria-label="Store administration">{navigation.map(({ path, label }) => <Link to={path} key={path} aria-current={location.pathname === path ? "page" : undefined}>{label}</Link>)}</nav><Outlet /></section></Storefront>;
+  return <Storefront><section className="admin-layout"><span className="eyebrow">ZORVELLAE · Store studio</span><div className="admin-toolbar"><h1>Thoughtful store management.</h1></div><nav className="admin-nav" aria-label="Store administration">{navigation.map(({ path, label }) => <Link to={path} key={path} aria-current={location.pathname === path ? "page" : undefined}>{label}</Link>)}</nav><AdminGate><Outlet /></AdminGate></section></Storefront>;
 }
