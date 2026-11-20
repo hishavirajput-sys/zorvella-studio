@@ -15,6 +15,13 @@
       "when": 1795160023206,
       "tag": "0001_track_variant_inventory",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795160286980,
+      "tag": "0002_admin_order_and_customer_controls",
+      "breakpoints": true
     }
   ]
 }
