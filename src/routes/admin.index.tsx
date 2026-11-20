@@ -6,6 +6,14 @@ import { PageHeading } from "@/components/storefront";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/admin/")({
+  head: () => ({ meta: [
+    { title: "Store Studio Overview — ZORVELLAE" },
+    { name: "description", content: "Private overview of ZORVELLAE products, categories, and order activity." },
+    { property: "og:title", content: "Store Studio Overview — ZORVELLAE" },
+    { property: "og:description", content: "A secure overview for ZORVELLAE store managers." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   loader: ({ context }) => context.queryClient.ensureQueryData({ queryKey: ["admin", "overview"], queryFn: async () => {
     const [products, categories, orders, customers, messages, inventory, settings] = await Promise.all([
       supabase.from("products").select("id", { count: "exact", head: true }),
