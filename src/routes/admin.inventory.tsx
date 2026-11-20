@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { getInventoryStatus } from "@/lib/store-domain";
 
 export const Route = createFileRoute("/admin/inventory")({
   head: () => ({ meta: [
@@ -83,23 +84,32 @@ function InventoryPage() {
       return;
     }
     setPending(variant.id); setReasonError("");
-    const { data, error } = await supabase.rpc("adjust_product_inventory", {
-      p_product_id: product.id,
-      p_variant_id: variant.id,
-      p_action: action,
-      p_quantity: amount,
-      p_reason: reason,
-    });
-    setPending("");
-    if (error) {
-      setReasonError(error.code === "42501" ? "Your account is not permitted to change stock." : error.message.includes("zero") ? "Stock cannot be reduced below zero." : "Stock could not be updated. Verify the count and try again.");
-      return;
+    try {
+      const { data, error } = await supabase.rpc("adjust_product_inventory", {
+        p_product_id: product.id,
+        p_variant_id: variant.id,
+        p_action: action,
+        p_quantity: amount,
+        p_reason: reason,
+      });
+      if (error) {
+        setReasonError(error.code === "42501" ? "Your account is not permitted to change stock." : "Stock could not be updated. Verify the count and try again.");
+        return;
+      }
+      if (!data || data.length === 0) {
+        setReasonError("Stock could not be changed. Check the selected size, count, and reason.");
+        return;
+      }
+      toast.success("Stock count and adjustment history updated.");
+      await queryClient.invalidateQueries({ queryKey: ["admin", "inventory"] });
+      await queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
+      if (historyFor?.productId === product.id && historyFor.variantId === variant.id) await loadHistory(product.id, variant.id);
+      form.reset();
+    } catch {
+      setReasonError("Stock could not be updated right now. Please try again.");
+    } finally {
+      setPending("");
     }
-    toast.success("Stock count and adjustment history updated.");
-    await queryClient.invalidateQueries({ queryKey: ["admin", "inventory"] });
-    await queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
-    if (historyFor?.productId === product.id && historyFor.variantId === variant.id) await loadHistory(product.id, variant.id);
-    form.reset();
   }
   async function loadHistory(productId: string, variantId: string) {
     setHistoryFor({ productId, variantId });
@@ -111,7 +121,7 @@ function InventoryPage() {
     }
     setHistory(data.map((entry) => ({ adjustment_id: entry.id, previous_quantity: entry.previous_quantity, new_quantity: entry.new_quantity, action: entry.action, adjustment_amount: entry.adjustment_amount, reason: entry.reason, created_at: entry.created_at })));
   }
-  const variants = products.flatMap((product) => product.variants.map((variant) => ({ product, variant, quantity: product.stock_by_variant[variant.id] })));
-  const visible = variants.filter(({ quantity }) => filter === "all" || (filter === "untracked" ? typeof quantity !== "number" : filter === "out_of_stock" ? quantity === 0 : filter === "low_stock" ? typeof quantity === "number" && quantity > 0 && quantity <= 5 : typeof quantity === "number" && quantity > 5));
-  return <><h2 className="admin-page-heading">Stock by product size</h2><p className="account-lead">An untracked count is not the same as zero. Verified physical counts are required before stock can be increased or removed; checkout does not change stock.</p><label className="admin-search-label">Show<select className="store-field" value={filter} onChange={(event) => setFilter(event.target.value)}><option value="all">All sizes</option><option value="in_stock">In stock</option><option value="low_stock">Low stock (1–5)</option><option value="out_of_stock">Out of stock</option><option value="untracked">Untracked</option></select></label>{visible.length === 0 ? <p className="account-lead">No product sizes match this filter.</p> : visible.map(({ product, variant, quantity }) => <article className="inventory-variant" key={`${product.id}-${variant.id}`}><div className="inventory-variant-head"><div><span className="eyebrow">{product.is_demo ? "Demo · not for sale" : typeof quantity === "number" ? quantity === 0 ? "Out of stock" : quantity <= 5 ? "Low stock" : "In stock" : "Untracked"}</span><h3>{product.name} · {variant.label}</h3><p>SKU {variant.id}</p></div><strong>{typeof quantity === "number" ? `${quantity} units` : "Not counted"}</strong></div><form className="inventory-adjust-form" onSubmit={(event) => void adjustStock(event, product, variant)}><label>Action<select className="store-field" name="action" defaultValue="set"><option value="set">Set verified physical count</option><option value="increment" disabled={typeof quantity !== "number" || product.is_demo}>Add units</option><option value="decrement" disabled={typeof quantity !== "number" || product.is_demo}>Remove units</option></select></label><label>{"Set"} count or units<input className="store-field" type="number" name="quantity" min="0" max="1000000" step="1" required /></label><label>Reason<input className="store-field" name="reason" minLength={3} maxLength={500} required /></label><Button type="submit" variant="outline" size="sm" disabled={pending === variant.id || product.is_demo}>{pending === variant.id ? "Saving…" : "Save adjustment"}</Button><Button type="button" variant="ghost" size="sm" onClick={() => void loadHistory(product.id, variant.id)}>View recent history</Button>{reasonError && pending === "" && <p className="auth-error" role="alert">{reasonError}</p>}</form>{historyFor?.productId === product.id && historyFor.variantId === variant.id && <ol className="inventory-history">{history.length ? history.map((entry) => <li key={entry.adjustment_id}><strong>{entry.action === "set" ? "Count set" : entry.action === "increment" ? "Units added" : "Units removed"}: {entry.previous_quantity ?? "Untracked"} → {entry.new_quantity}</strong><span>{entry.reason}</span><time>{new Date(entry.created_at).toLocaleString()}</time></li>) : <li>No stock adjustments recorded for this size.</li>}</ol>}</article>)}</>;
+  const variants = products.flatMap((product) => product.variants.map((variant) => ({ product, variant, quantity: product.stock_by_variant[variant.id], status: getInventoryStatus(product.stock_by_variant[variant.id], product.low_stock_threshold) })));
+  const visible = variants.filter(({ status }) => filter === "all" || status === filter);
+  return <><h2 className="admin-page-heading">Stock by product size</h2><p className="account-lead">An untracked count is not the same as zero. Verified physical counts are required before stock can be increased or removed; checkout does not change stock.</p><label className="admin-search-label">Show<select className="store-field" value={filter} onChange={(event) => setFilter(event.target.value)}><option value="all">All sizes</option><option value="in_stock">In stock</option><option value="low_stock">Low stock</option><option value="out_of_stock">Out of stock</option><option value="untracked">Untracked</option></select></label>{visible.length === 0 ? <p className="account-lead">No product sizes match this filter.</p> : visible.map(({ product, variant, quantity, status }) => <article className="inventory-variant" key={`${product.id}-${variant.id}`}><div className="inventory-variant-head"><div><span className="eyebrow">{product.is_demo ? "Demo · not for sale" : status === "out_of_stock" ? "Out of stock" : status === "low_stock" ? "Low stock" : status === "in_stock" ? "In stock" : "Untracked"}</span><h3>{product.name} · {variant.label}</h3><p>SKU {variant.id}</p></div><strong>{typeof quantity === "number" ? `${quantity} units` : "Not counted"}</strong></div><form className="inventory-adjust-form" onSubmit={(event) => void adjustStock(event, product, variant)}><label>Action<select className="store-field" name="action" defaultValue="set"><option value="set">Set verified physical count</option><option value="increment" disabled={typeof quantity !== "number" || product.is_demo}>Add units</option><option value="decrement" disabled={typeof quantity !== "number" || product.is_demo}>Remove units</option></select></label><label>Count or units<input className="store-field" type="number" name="quantity" min="0" max="1000000" step="1" required /></label><label>Reason<input className="store-field" name="reason" minLength={3} maxLength={500} required /></label><Button type="submit" variant="outline" size="sm" disabled={pending === variant.id || product.is_demo}>{pending === variant.id ? "Saving…" : "Save adjustment"}</Button><Button type="button" variant="ghost" size="sm" onClick={() => void loadHistory(product.id, variant.id)}>View recent history</Button>{reasonError && pending === "" && <p className="auth-error" role="alert">{reasonError}</p>}</form>{historyFor?.productId === product.id && historyFor.variantId === variant.id && <ol className="inventory-history">{history.length ? history.map((entry) => <li key={entry.adjustment_id}><strong>{entry.action === "set" ? "Count set" : entry.action === "increment" ? "Units added" : "Units removed"}: {entry.previous_quantity ?? "Untracked"} → {entry.new_quantity}</strong><span>{entry.reason}</span><time>{new Date(entry.created_at).toLocaleString()}</time></li>) : <li>No stock adjustments recorded for this size.</li>}</ol>}</article>)}</>;
 }

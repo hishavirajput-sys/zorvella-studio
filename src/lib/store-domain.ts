@@ -4,6 +4,13 @@ export type StoreProduct = Database["public"]["Tables"]["products"]["Row"];
 export type StoreCategory = Database["public"]["Tables"]["categories"]["Row"];
 export type CartItem = { productId: string; variantId: string; quantity: number };
 
+export function getInventoryStatus(quantity: number | undefined, lowStockThreshold = 5) {
+  if (quantity === undefined || !Number.isSafeInteger(quantity) || quantity < 0) return "untracked" as const;
+  if (quantity === 0) return "out_of_stock" as const;
+  if (quantity <= lowStockThreshold) return "low_stock" as const;
+  return "in_stock" as const;
+}
+
 export function isPurchasableProduct(product: Pick<StoreProduct, "is_active" | "is_published" | "is_demo" | "purchase_available">) {
   return product.is_active && product.is_published && !product.is_demo && product.purchase_available;
 }

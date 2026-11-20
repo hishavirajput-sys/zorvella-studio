@@ -395,6 +395,21 @@
   .admin-settings-notice { max-width: 620px; margin-top: 30px; padding-top: 16px; border-top: 1px solid var(--line); }
   .admin-settings-notice h3 { margin: 0; font-size: 21px; }
   .admin-settings-notice p { color: var(--muted-foreground); font-size: 11px; line-height: 1.7; }
+  .admin-search-label { width: min(100%,330px); margin: 18px 0; display: grid; grid-template-columns: auto minmax(0,1fr); align-items: center; gap: 12px; color: var(--muted-foreground); font-size: 10px; }
+  .inventory-variant { margin-top: 16px; padding: 17px 0; border-top: 1px solid var(--line); }
+  .inventory-variant-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+  .inventory-variant-head h3 { margin: 5px 0 0; font-size: 19px; }
+  .inventory-variant-head p { margin: 5px 0 0; color: var(--muted-foreground); font-size: 9px; }
+  .inventory-variant-head > strong { flex: 0 0 auto; font-size: 12px; font-weight: 500; }
+  .inventory-adjust-form { margin-top: 13px; display: flex; flex-wrap: wrap; align-items: end; gap: 10px; }
+  .inventory-adjust-form > label { min-width: 150px; flex: 1 1 150px; display: flex; flex-direction: column; gap: 5px; color: var(--muted-foreground); font-size: 9px; }
+  .inventory-adjust-form > button { min-height: 38px; }
+  .inventory-adjust-form > .auth-error { flex-basis: 100%; }
+  .inventory-history { margin: 14px 0 0; padding: 10px 0 0; border-top: 1px solid var(--line); list-style: none; }
+  .inventory-history li { padding: 8px 0; display: grid; grid-template-columns: 1fr auto; gap: 5px 14px; border-bottom: 1px solid var(--line); font-size: 10px; }
+  .inventory-history li strong { font-weight: 500; }
+  .inventory-history li span { color: var(--muted-foreground); }
+  .inventory-history li time { color: var(--muted-foreground); font-size: 9px; text-align: right; }
 }
 
 @media (max-width: 800px) {

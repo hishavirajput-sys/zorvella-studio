@@ -1,6 +1,16 @@
 import { describe, expect, it } from "vitest";
 
-import { calculateCartSubtotal, isPurchasableProduct } from "@/lib/store-domain";
+import { calculateCartSubtotal, getInventoryStatus, isPurchasableProduct } from "@/lib/store-domain";
+
+describe("inventory status", () => {
+  it("classifies counts at the five-unit low-stock threshold", () => {
+    expect(getInventoryStatus(undefined, 5)).toBe("untracked");
+    expect(getInventoryStatus(0, 5)).toBe("out_of_stock");
+    expect(getInventoryStatus(1, 5)).toBe("low_stock");
+    expect(getInventoryStatus(5, 5)).toBe("low_stock");
+    expect(getInventoryStatus(6, 5)).toBe("in_stock");
+  });
+});
 
 describe("store product availability", () => {
   it("never permits development demos to be purchased, even if their other flags are enabled", () => {
