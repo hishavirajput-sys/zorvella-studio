@@ -145,7 +145,7 @@
   .store-icon-link svg { width: 17px; height: 17px; stroke-width: 1.55; }
   .store-icon-link:hover { color: var(--moss); }
   .bag-count { position: absolute; top: -1px; right: -2px; min-width: 16px; height: 16px; display: grid; place-items: center; border-radius: 999px; background: var(--moss); color: var(--primary-foreground); font-size: 9px; line-height: 1; }
-  .mobile-menu-trigger { display: none; }
+  .mobile-menu-trigger { display: none !important; }
   .store-footer { margin-top: 0; padding: 54px clamp(20px,6vw,78px) 18px; background: var(--espresso); color: var(--ivory); }
   .footer-main { width: min(100%,1280px); margin-inline: auto; padding-bottom: 44px; display: grid; grid-template-columns: 1.65fr 1fr 1fr 1fr; gap: 32px; }
   .footer-brand > .brand-name { color: var(--ivory); font-size: 27px; text-decoration: none; }
