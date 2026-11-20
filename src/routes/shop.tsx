@@ -15,7 +15,7 @@ export const Route = createFileRoute("/shop")({
   ] }),
   loader: async ({ context }) => Promise.all([
     context.queryClient.ensureQueryData(catalogQueryOptions()),
-    context.queryClient.ensureQueryData(categoriesQueryOptions()),
+    context.queryClient.ensureQueryData(categoriesQueryOptions),
   ]),
   component: ShopPage,
 });
