@@ -61,6 +61,7 @@ export const categoriesQueryOptions = queryOptions({
 
 export async function getSignedInUser() {
   const { data, error } = await supabase.auth.getUser();
+  if (error?.name === "AuthSessionMissingError") return null;
   if (error) throw error;
   return data.user;
 }
