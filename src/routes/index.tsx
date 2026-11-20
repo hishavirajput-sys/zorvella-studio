@@ -1,9 +1,8 @@
-import { useEffect } from "react";
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, BadgeCheck, Droplet, FlaskConical, Leaf, Sparkles } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-import { ProductGrid, Storefront, type } from "@/components/storefront";
+import { ProductGrid, Storefront } from "@/components/storefront";
 import { catalogQueryOptions } from "@/lib/store-data";
 
 const values = [
@@ -37,19 +36,6 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const { data: products } = useSuspenseQuery(catalogQueryOptions());
-  const router = useRouter();
-
-  useEffect(() => {
-    const { data } = (async () => ({ data: await import("@/integrations/supabase/client") }))();
-    void data.then(({ supabase }) => {
-      const { data: subscription } = supabase.auth.onAuthStateChange((event) => {
-        if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
-        router.invalidate();
-        if (event !== "SIGNED_OUT") void router.options.context.queryClient.invalidateQueries();
-      });
-      return subscription.subscription.unsubscribe;
-    });
-  }, [router]);
 
   return (
     <Storefront>
