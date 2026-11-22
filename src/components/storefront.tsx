@@ -12,6 +12,7 @@ import { ArrowRight, ArrowUpRight, Heart, Menu, Minus, Plus, ShoppingBag, UserRo
 import { toast } from "sonner";
 import { LovableMark } from "@lovable.dev/cloud-auth-js/react";
 
+import serumImage from "@/assets/zorvellae-serum-editorial.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -249,12 +250,29 @@ export function StoreFooter() {
   );
 }
 
-export function PageHeading({ eyebrow, title, description, className = "" }: { eyebrow?: string; title: ReactNode; description?: string; className?: string }) {
+export function PageHeading({
+  eyebrow,
+  title,
+  description,
+  className = "",
+  imageSrc = serumImage.url,
+  imageAlt = "ZORVELLAE serum bottles arranged on a stone slab with botanical shadows.",
+}: {
+  eyebrow?: string;
+  title: ReactNode;
+  description?: string;
+  className?: string;
+  imageSrc?: string;
+  imageAlt?: string;
+}) {
   return (
     <div className={`page-heading ${className}`}>
-      {eyebrow && <span className="eyebrow">{eyebrow}</span>}
-      <h1 className="editorial-title">{title}</h1>
-      {description && <p>{description}</p>}
+      <div className="page-heading-copy">
+        {eyebrow && <span className="eyebrow">{eyebrow}</span>}
+        <h1 className="editorial-title">{title}</h1>
+        {description && <p>{description}</p>}
+      </div>
+      <div className="page-heading-visual"><img src={imageSrc} alt={imageAlt} loading="lazy" /></div>
     </div>
   );
 }
