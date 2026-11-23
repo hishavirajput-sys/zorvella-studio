@@ -8,6 +8,7 @@
 - [ ] Review and accept the preview cutover after original data and manager access are addressed.
 
 ## Current visual refresh
-- [ ] Align shared navigation, page headers, content surfaces, and footer with the premium homepage direction.
-- [ ] Refresh the storefront, account, sign-in, and store-management pages while preserving existing copy, access rules, and purchase limitations.
-- [ ] Check key routes at desktop and phone widths, and run the project tests.
+- [x] Align shared navigation, page headers, content surfaces, and footer with the premium homepage direction.
+- [x] Refresh the storefront, account, sign-in, and store-management pages while preserving existing copy, access rules, and purchase limitations.
+- [ ] Finish a visual review of all existing screens at desktop, tablet, and phone sizes; fix only clear gaps against the supplied requirements.
+- [ ] Remove the browser-tab favicon.
