@@ -2,13 +2,8 @@
 
 Imported website: https://github.com/Shavirajput/ZORVELLAE.git
 
-This project was built with [Lovable](https://lovable.dev).
 
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/52f015a1-ae5d-4cf0-b91f-6852676a9460).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
+ **Ship faster**: describe what you want to build and Lovable handles the code.
 - **Stay in sync**: every change made in Lovable is committed straight to this repository.
 - **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
