@@ -1,11 +1,11 @@
 import { queryOptions } from "@tanstack/react-query";
 
 import { supabase } from "@/integrations/supabase/client";
-import type { CartItem, StoreCategory, StoreProduct } from "@/lib/store-domain";
+import { filterCatalogProducts, type CartItem, type StoreCategory, type StoreProduct } from "@/lib/store-domain";
 
-export const catalogQueryOptions = (categorySlug?: string) =>
+export const catalogQueryOptions = (categorySlug?: string, includeDemo = false) =>
   queryOptions({
-    queryKey: ["store", "catalog", categorySlug ?? "all"],
+    queryKey: ["store", "catalog", categorySlug ?? "all", includeDemo ? "including-demo" : "excluding-demo"],
     queryFn: async () => {
       let query = supabase
         .from("products")
@@ -25,7 +25,7 @@ export const catalogQueryOptions = (categorySlug?: string) =>
       }
       const { data, error } = await query;
       if (error) throw error;
-      return data;
+      return filterCatalogProducts(data, includeDemo);
     },
   });
 
