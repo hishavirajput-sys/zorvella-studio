@@ -14,21 +14,22 @@ export const Route = createFileRoute("/shop")({
     { name: "twitter:card", content: "summary_large_image" },
   ] }),
   loader: async ({ context }) => Promise.all([
-    context.queryClient.ensureQueryData(catalogQueryOptions()),
+    context.queryClient.ensureQueryData(catalogQueryOptions(undefined, true)),
     context.queryClient.ensureQueryData(categoriesQueryOptions),
   ]),
   component: ShopPage,
 });
 
 function ShopPage() {
-  const { data: products } = useSuspenseQuery(catalogQueryOptions());
+  const { data: products } = useSuspenseQuery(catalogQueryOptions(undefined, true));
   const { data: categories } = useSuspenseQuery(categoriesQueryOptions);
   return (
     <Storefront>
-      <section className="catalog-banner"><PageHeading eyebrow="Botanical intelligence · clinical intention" title={<>Thoughtful care, at every step.</>} description="Find a considered approach to cleanse, treat, hydrate and protect. Only approved, published formulations appear here." /></section>
+      <section className="catalog-banner"><PageHeading eyebrow="Botanical intelligence · clinical intention" title={<>Thoughtful care, at every step.</>} description="Explore considered formulations and clearly marked sample listings. Sample products are for preview only and cannot be purchased." /></section>
       <section className="catalog-body store-products">
         <div className="category-filter-list"><Link className="category-chip" aria-current="page" to="/shop">All formulations</Link>{categories.map((category) => <Link className="category-chip" key={category.id} to="/shop/category/$slug" params={{ slug: category.slug }}>{category.name}</Link>)}</div>
         <div className="section-ruler" />
+        {products.some((product) => product.is_demo) && <p className="featured-note" role="note">Sample products and prices are illustrative only; these items are not for sale.</p>}
         <ProductGrid products={products} />
       </section>
     </Storefront>

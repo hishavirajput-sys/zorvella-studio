@@ -33,3 +33,4 @@ use the editor.
 - Keep migrated screens in TanStack Start file routes and shared UI in reusable components, rather than copying the source router, because this project is built on TanStack Start.
 - Keep published, database-backed page-copy reads in `src/lib/page-content.ts` so public pages share one visibility rule.
 - Keep cross-page storefront framing in shared UI and design tokens so routes remain consistent with the homepage.
+- Keep demo listings opt-in for the main shop catalog, mark them clearly, and exclude them from homepage/category collections so sample data is not mistaken for live stock.

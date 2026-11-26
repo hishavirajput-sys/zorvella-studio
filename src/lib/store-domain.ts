@@ -19,6 +19,10 @@ export function isPurchasableProduct(product: Pick<StoreProduct, "is_active" | "
   return product.is_active && product.is_published && !product.is_demo && product.purchase_available;
 }
 
+export function filterCatalogProducts<T extends Pick<StoreProduct, "is_demo">>(products: T[], includeDemo = false): T[] {
+  return includeDemo ? products : products.filter((product) => !product.is_demo);
+}
+
 export function formatPrice(value: number, currency = "USD") {
   return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(value);
 }

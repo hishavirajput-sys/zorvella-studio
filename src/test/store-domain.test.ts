@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { calculateCartSubtotal, customerProfileMetadata, getInventoryStatus, isPurchasableProduct } from "@/lib/store-domain";
+import { calculateCartSubtotal, customerProfileMetadata, filterCatalogProducts, getInventoryStatus, isPurchasableProduct } from "@/lib/store-domain";
 
 describe("customer profile", () => {
   it("stores only the trimmed name alongside the login", () => {
@@ -19,6 +19,15 @@ describe("inventory status", () => {
 });
 
 describe("store product availability", () => {
+  it("shows demo products only when a catalog explicitly includes them", () => {
+    const products = [
+      { slug: "approved-serum", is_demo: false },
+      { slug: "sample-serum", is_demo: true },
+    ];
+    expect(filterCatalogProducts(products).map((product) => product.slug)).toEqual(["approved-serum"]);
+    expect(filterCatalogProducts(products, true).map((product) => product.slug)).toEqual(["approved-serum", "sample-serum"]);
+  });
+
   it("never permits development demos to be purchased, even if their other flags are enabled", () => {
     expect(
       isPurchasableProduct({ is_active: true, is_published: true, is_demo: true, purchase_available: true }),
