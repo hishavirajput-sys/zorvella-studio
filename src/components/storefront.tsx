@@ -3,12 +3,26 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type FormEvent,
   type ReactNode,
 } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, ArrowUpRight, Heart, Menu, Minus, Plus, ShoppingBag, UserRound, X } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  CheckCircle2,
+  Heart,
+  Menu,
+  Minus,
+  Plus,
+  Search,
+  ShoppingBag,
+  Star,
+  UserRound,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
 import { LovableMark } from "@lovable.dev/cloud-auth-js/react";
 
@@ -168,8 +182,11 @@ export function Storefront({ children }: { children: ReactNode }) {
 export function AnnouncementBar() {
   return (
     <div className="announcement-bar">
-      <span>Botanical intelligence. Clinical intention.</span>
-      <span className="hidden sm:inline">Considered skincare, without compromise</span>
+      <span className="announcement-spacer hidden md:block" aria-hidden="true" />
+      <span className="announcement-copy">Thoughtful skincare. Science-led formulations.</span>
+      <Link className="announcement-link" to="/contact">
+        Contact us <ArrowRight size={11} aria-hidden="true" />
+      </Link>
     </div>
   );
 }
@@ -177,21 +194,16 @@ export function AnnouncementBar() {
 function StoreHeader() {
   const { items } = useStoreCart();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchCatalog, setSearchCatalog] = useState<Array<{ title: string; subtitle: string; to: string; slug?: string }>>([]);
   const [signedIn, setSignedIn] = useState(false);
-  const [hasAdminAccess, setHasAdminAccess] = useState(false);
 
   useEffect(() => {
     let active = true;
     const refresh = async () => {
       const user = await getSignedInUser().catch(() => null);
-      if (!active) return;
-      setSignedIn(Boolean(user));
-      if (!user) {
-        setHasAdminAccess(false);
-        return;
-      }
-      const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle();
-      if (active) setHasAdminAccess(Boolean(data));
+      if (active) setSignedIn(Boolean(user));
     };
     void refresh();
     const { data } = supabase.auth.onAuthStateChange(() => void refresh());
@@ -201,6 +213,40 @@ function StoreHeader() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!searchOpen || searchCatalog.length > 0) return;
+    let active = true;
+    void Promise.all([
+      supabase.from("products").select("name, slug, category_label, is_published, is_active, is_demo").eq("is_published", true).eq("is_active", true).eq("is_demo", false),
+      supabase.from("ingredients").select("name, inci, slug, status").eq("status", "published"),
+    ]).then(([productsRes, ingredientsRes]) => {
+      if (!active) return;
+      const productEntries = (productsRes.data ?? []).map((entry) => ({
+        title: entry.name,
+        subtitle: entry.category_label || "Formulation",
+        to: "/product/$slug",
+        slug: entry.slug,
+      }));
+      const ingredientEntries = (ingredientsRes.data ?? []).map((entry) => ({
+        title: entry.name,
+        subtitle: entry.inci || "Ingredient monograph",
+        to: "/ingredients",
+      }));
+      setSearchCatalog([...productEntries, ...ingredientEntries]);
+    });
+    return () => {
+      active = false;
+    };
+  }, [searchOpen, searchCatalog.length]);
+
+  const filteredResults = useMemo(() => {
+    const q = searchTerm.trim().toLowerCase();
+    if (!q) return searchCatalog.slice(0, 5);
+    return searchCatalog
+      .filter((item) => item.title.toLowerCase().includes(q) || item.subtitle.toLowerCase().includes(q))
+      .slice(0, 6);
+  }, [searchCatalog, searchTerm]);
+
   return (
     <header className="store-header">
       <div className="store-header-inner">
@@ -208,18 +254,32 @@ function StoreHeader() {
           {menuOpen ? <X /> : <Menu />}
         </Button>
         <Link to="/" className="brand-lockup" aria-label="Zorvellae, home">
-          <span className="brand-name">ZORVELLAE</span>
-          <span className="brand-caption">Botanical science · Thoughtful ritual</span>
+          <img
+            src="/assets/aistudio/ZORVELLAE_skin_care_logo_5d68bf3f.png"
+            alt="ZORVELLAE — Science-Led Skincare"
+            className="brand-logo"
+          />
         </Link>
         <nav className={`store-nav ${menuOpen ? "store-nav-open" : ""}`} aria-label="Main navigation">
-          <Link to="/shop" onClick={() => setMenuOpen(false)}>Shop all</Link>
-          <Link to="/routines" onClick={() => setMenuOpen(false)}>Rituals</Link>
+          <Link to="/shop" onClick={() => setMenuOpen(false)}>Shop</Link>
           <Link to="/skin-concerns" onClick={() => setMenuOpen(false)}>Skin concerns</Link>
-          <Link to="/ingredients" onClick={() => setMenuOpen(false)}>Ingredients</Link>
+          <Link to="/routines" onClick={() => setMenuOpen(false)}>Skincare routines</Link>
           <Link to="/our-science" onClick={() => setMenuOpen(false)}>Our science</Link>
-          {hasAdminAccess && <Link className="admin-nav-link" to="/admin" onClick={() => setMenuOpen(false)}>Store studio</Link>}
+          <Link to="/ingredients" onClick={() => setMenuOpen(false)}>Ingredients</Link>
+          <Link to="/about" onClick={() => setMenuOpen(false)}>About us</Link>
         </nav>
         <div className="store-header-actions">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="store-icon-button"
+            aria-label={searchOpen ? "Close search" : "Search formulations and ingredients"}
+            aria-expanded={searchOpen}
+            onClick={() => setSearchOpen((open) => !open)}
+          >
+            {searchOpen ? <X aria-hidden="true" /> : <Search aria-hidden="true" />}
+          </Button>
           <Link className="store-icon-link account-action" to={signedIn ? "/account" : "/login"} aria-label={signedIn ? "Your account" : "Sign in"}>
             <UserRound aria-hidden="true" />
           </Link>
@@ -229,23 +289,157 @@ function StoreHeader() {
           </Link>
         </div>
       </div>
+      {searchOpen && (
+        <div className="header-search-panel" role="search">
+          <div className="header-search-inner">
+            <div className="header-search-input-row">
+              <Search size={15} aria-hidden="true" />
+              <input
+                type="search"
+                className="header-search-input"
+                placeholder="Search serums, ceramides, cleansers, or ingredient monographs…"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                autoFocus
+              />
+              <Button type="button" variant="ghost" size="sm" onClick={() => setSearchOpen(false)}>
+                Close
+              </Button>
+            </div>
+            <div className="header-search-results">
+              {filteredResults.length > 0 ? (
+                filteredResults.map((entry) =>
+                  entry.slug ? (
+                    <Link
+                      key={`${entry.to}-${entry.slug}`}
+                      to="/product/$slug"
+                      params={{ slug: entry.slug }}
+                      className="header-search-result"
+                      onClick={() => setSearchOpen(false)}
+                    >
+                      <strong>{entry.title}</strong>
+                      <span>{entry.subtitle}</span>
+                    </Link>
+                  ) : (
+                    <Link
+                      key={`${entry.to}-${entry.title}`}
+                      to="/ingredients"
+                      className="header-search-result"
+                      onClick={() => setSearchOpen(false)}
+                    >
+                      <strong>{entry.title}</strong>
+                      <span>{entry.subtitle}</span>
+                    </Link>
+                  ),
+                )
+              ) : (
+                <p className="header-search-empty">No matching formulations or ingredients found.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
 
 export function StoreFooter() {
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+
+  async function handleSubscribe(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const cleaned = email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleaned)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+    const { data } = await supabase
+      .from("store_settings")
+      .select("setting_value")
+      .eq("setting_key", "newsletter.subscribers")
+      .maybeSingle();
+    const existing = Array.isArray(data?.setting_value)
+      ? data.setting_value.filter((entry): entry is string => typeof entry === "string")
+      : [];
+    const next = existing.includes(cleaned) ? existing : [...existing, cleaned];
+    await supabase
+      .from("store_settings")
+      .upsert({ setting_key: "newsletter.subscribers", setting_value: next });
+    setSubscribed(true);
+    setEmail("");
+    toast.success("Welcome to the ZORVELLAE Circle.");
+  }
+
   return (
     <footer className="store-footer">
-      <div className="footer-main">
+      <div className="footer-main footer-main-editorial">
         <div className="footer-brand">
-          <Link to="/" className="brand-name">ZORVELLAE</Link>
-          <p>Botanical intelligence for the skin barrier, considered one ritual at a time.</p>
+          <Link to="/" className="footer-brand-link" aria-label="Zorvellae, home">
+            <img
+              src="/assets/aistudio/ZORVELLAE_skin_care_logo_5d68bf3f.png"
+              alt="ZORVELLAE — Science-Led Skincare"
+              className="footer-logo"
+            />
+          </Link>
+          <p>
+            Evidence-informed, transparent, botanical clinical formulations. Bridging
+            dermatological rigour with sensory restorative rituals.
+          </p>
+          <span className="footer-certification">
+            <CheckCircle2 size={13} aria-hidden="true" /> Clean Clinical Certified
+          </span>
         </div>
-        <div className="footer-column"><span className="eyebrow">Discover</span><Link to="/shop">Formulations</Link><Link to="/routines">Skin rituals</Link><Link to="/skin-concerns">Skin concerns</Link></div>
-        <div className="footer-column"><span className="eyebrow">The science</span><Link to="/ingredients">Ingredient monographs</Link><Link to="/our-science">Our approach</Link><Link to="/about">Our story</Link></div>
-        <div className="footer-column"><span className="eyebrow">Your space</span><Link to="/account">Your account</Link><Link to="/account/orders">Order history</Link><Link to="/contact">Contact</Link></div>
+        <div className="footer-column">
+          <span className="eyebrow">Shop</span>
+          <Link to="/shop/category/$slug" params={{ slug: "cleansers" }}>Cleansers &amp; Essences</Link>
+          <Link to="/shop/category/$slug" params={{ slug: "serums" }}>Targeted Serums</Link>
+          <Link to="/shop/category/$slug" params={{ slug: "barrier-creams" }}>Barrier Creams</Link>
+          <Link to="/shop/category/$slug" params={{ slug: "eye-care" }}>Eye Treatments</Link>
+          <Link to="/routines">Curated Ritual Bundles</Link>
+        </div>
+        <div className="footer-column">
+          <span className="eyebrow">Skin Science</span>
+          <Link to="/our-science">Clinical Trial Data</Link>
+          <Link to="/ingredients">Ingredient Transparency</Link>
+          <Link to="/routines">Routine Architecture</Link>
+          <Link to="/about">About Zorvellae</Link>
+        </div>
+        <div className="footer-column footer-newsletter">
+          <span className="eyebrow">Join the Zorvellae Circle</span>
+          <p className="footer-newsletter-copy">
+            Receive 15% off your first ritual, private invitations to clinical monograph releases, and
+            botanical skincare formulation notes.
+          </p>
+          <form className="footer-newsletter-form" onSubmit={handleSubscribe}>
+            <input
+              type="email"
+              aria-label="Email address for Zorvellae updates"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(event) => {
+                setEmail(event.target.value);
+                if (subscribed) setSubscribed(false);
+              }}
+              required
+            />
+            <button type="submit">Subscribe</button>
+          </form>
+          {subscribed && (
+            <p className="footer-newsletter-status" role="status">
+              You are subscribed to ZORVELLAE formulation notes.
+            </p>
+          )}
+        </div>
       </div>
-      <div className="footer-bottom"><span>© ZORVELLAE</span><span>Formulated with intention.</span><Link to="/contact">Customer care <ArrowUpRight size={13} /></Link></div>
+      <div className="footer-bottom">
+        <span>© 2026 ZORVELLAE Laboratories Inc. All formulations clinical grade.</span>
+        <div className="footer-bottom-links">
+          <Link to="/contact">Customer care</Link>
+          <Link to="/about">Philosophy</Link>
+          <span>United States (USD $)</span>
+        </div>
+      </div>
     </footer>
   );
 }
@@ -272,7 +466,7 @@ export function PageHeading({
         <h1 className="editorial-title">{title}</h1>
         {description && <p>{description}</p>}
       </div>
-      <div className="page-heading-visual"><img src={imageSrc} alt={imageAlt} loading="lazy" /></div>
+      <div className="page-heading-visual"><img src={imageSrc} alt={imageAlt} loading="lazy" referrerPolicy="no-referrer" /></div>
     </div>
   );
 }
@@ -285,28 +479,76 @@ export function ProductCard({ product, onQuickAdd }: { product: StoreProduct; on
   const imageAlt = firstImage && typeof firstImage === "object" && !Array.isArray(firstImage) ? firstImage["alt"] : null;
   const available = isPurchasableProduct(product);
   const hasImage = typeof imageUrl === "string" && imageUrl.trim() !== "" && !imageError;
+  const specs =
+    product.specifications && typeof product.specifications === "object" && !Array.isArray(product.specifications)
+      ? product.specifications
+      : null;
+  const rating = specs && typeof specs["rating"] === "number" ? specs["rating"] : null;
+  const reviews = specs && typeof specs["reviews"] === "number" ? specs["reviews"] : null;
 
   return (
     <article className="product-card">
       <Link className="product-image-frame" to="/product/$slug" params={{ slug: product.slug }} aria-label={`View ${product.name}`}>
-        {hasImage ? <img src={imageUrl} alt={typeof imageAlt === "string" ? imageAlt : product.name} loading="lazy" onError={() => setImageError(true)} /> : (
+        {hasImage ? (
+          <img
+            src={imageUrl}
+            alt={typeof imageAlt === "string" ? imageAlt : product.name}
+            loading="lazy"
+            referrerPolicy="no-referrer"
+            onError={() => setImageError(true)}
+          />
+        ) : (
           <div className="product-image-empty" aria-label="Product photograph not available">
             <span className="product-image-emblem">Z</span>
             <span className="product-image-label">{product.category_label || "Formulation"}</span>
           </div>
         )}
         {product.badge && <span className="product-badge">{product.badge}</span>}
-        <Button type="button" aria-label={`Save ${product.name}`} title="Save formulation" variant="ghost" size="icon" className="wishlist-action" onClick={async (event) => { event.preventDefault(); event.stopPropagation(); try { await toggleCustomerWishlist(product.id); toast.success("Your saved formulations were updated."); } catch { toast.error("Sign in to save formulations."); } }}><Heart aria-hidden="true" /></Button>
+        <Button
+          type="button"
+          aria-label={`Save ${product.name}`}
+          title="Save formulation"
+          variant="ghost"
+          size="icon"
+          className="wishlist-action"
+          onClick={async (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            try {
+              await toggleCustomerWishlist(product.id);
+              toast.success("Your saved formulations were updated.");
+            } catch {
+              toast.error("Sign in to save formulations.");
+            }
+          }}
+        >
+          <Heart aria-hidden="true" />
+        </Button>
       </Link>
       <div className="product-card-copy">
-        <span className="product-category-label">{product.category_label || "Botanical care"}</span>
+        {rating !== null ? (
+          <span className="product-rating-line">
+            <Star size={11} aria-hidden="true" fill="currentColor" />
+            <span>{rating.toFixed(1)}</span>
+            {reviews !== null && <small>({reviews} reviews)</small>}
+          </span>
+        ) : (
+          <span className="product-category-label">{product.category_label || "Botanical care"}</span>
+        )}
         <Link to="/product/$slug" params={{ slug: product.slug }} className="product-name">{product.name}</Link>
         <p className="product-description">{product.description}</p>
         <div className="product-card-bottom">
           <span className="product-price">{formatPrice(productStartingPrice(product), product.currency)}</span>
           {onQuickAdd && (
-            <Button size="sm" type="button" disabled={!available} className="brand-button product-add-button" aria-label={available ? `Add ${product.name} to bag` : `${product.name} not available for purchase`} onClick={() => void addItem(product)}>
-              {available ? "Add" : "Unavailable"}
+            <Button
+              size="sm"
+              type="button"
+              disabled={!available}
+              className="brand-button product-add-button"
+              aria-label={available ? `Quick add ${product.name} to bag` : `${product.name} not available for purchase`}
+              onClick={() => void addItem(product)}
+            >
+              {available ? "Quick add" : "Unavailable"}
             </Button>
           )}
         </div>

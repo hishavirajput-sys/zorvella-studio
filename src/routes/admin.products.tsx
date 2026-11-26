@@ -53,14 +53,18 @@ function AdminProductsPage() {
     const description = String(fields.get("description") ?? "").trim();
     const category = categories.find((entry) => entry.id === categoryId);
     let safeImageUrl = "";
-    try {
-      const parsedImageUrl = new URL(imageUrl);
-      if (parsedImageUrl.protocol === "https:") safeImageUrl = parsedImageUrl.toString();
-    } catch {
-      safeImageUrl = "";
+    if (imageUrl.startsWith("/") && !imageUrl.startsWith("//")) {
+      safeImageUrl = imageUrl;
+    } else {
+      try {
+        const parsedImageUrl = new URL(imageUrl);
+        if (parsedImageUrl.protocol === "https:") safeImageUrl = parsedImageUrl.toString();
+      } catch {
+        safeImageUrl = "";
+      }
     }
     if (name.length < 2 || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || !category || !Number.isFinite(price) || price < 0 || description.length < 2 || variantLabel.length < 1 || !safeImageUrl) {
-      setError("Add the approved name, category, description, size, price, and HTTPS product photo.");
+      setError("Add the approved name, category, description, size, price, and product photo URL or path.");
       return;
     }
     const product: Database["public"]["Tables"]["products"]["Insert"] = {
@@ -94,7 +98,7 @@ function AdminProductsPage() {
     }
   }
   async function publish(product: typeof products[number]) {
-    const hasImage = Array.isArray(product.images) && product.images.some((image) => image && typeof image === "object" && !Array.isArray(image) && typeof image["url"] === "string" && image["url"].startsWith("https://"));
+    const hasImage = Array.isArray(product.images) && product.images.some((image) => image && typeof image === "object" && !Array.isArray(image) && typeof image["url"] === "string" && (image["url"].startsWith("https://") || (image["url"].startsWith("/") && !image["url"].startsWith("//"))));
     const hasVariant = Array.isArray(product.variants) && product.variants.some((variant) => variant && typeof variant === "object" && !Array.isArray(variant) && typeof variant["label"] === "string" && typeof variant["price"] === "number" && variant["price"] > 0);
     if (product.is_demo || !hasImage || !hasVariant) {
       toast.error("Add an approved product photo, size and price before publishing.");
@@ -104,5 +108,5 @@ function AdminProductsPage() {
     if (publishError) toast.error("This listing could not be published.");
     else { toast.success("The listing is visible; checkout stays unavailable until payments are configured."); await queryClient.invalidateQueries(); }
   }
-  return <><h2 className="admin-page-heading">Product listings</h2><p className="account-lead">Publishing makes a reviewed listing visible. No checkout or product can be purchased until payments are configured.</p><div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Formulation</th><th>Starting price</th><th>Visibility</th><th>Purchases</th><th>Actions</th></tr></thead><tbody>{products.length === 0 ? <tr><td colSpan={5}>No product records. Original MongoDB products were not included in the GitHub export.</td></tr> : products.map((product) => <tr key={product.id}><td><Link to="/product/$slug" params={{ slug: product.slug }}>{product.name}</Link><br />/{product.slug}</td><td>{formatPrice(product.price, product.currency)}</td><td>{product.is_published ? "Published" : "Draft"}</td><td>{product.is_demo ? "Demo · not for sale" : product.purchase_available ? "Available" : "Not available"}</td><td>{product.is_published ? <Button type="button" variant="ghost" size="sm" onClick={() => void unpublish(product.id)}>Unpublish</Button> : <Button type="button" variant="ghost" size="sm" onClick={() => void publish(product)}>Publish</Button>}</td></tr>)}</tbody></table></div><h3 className="admin-subheading">Create a draft listing</h3><form className="admin-add-form" onSubmit={submit}><label>Product name<input className="store-field" name="name" minLength={2} maxLength={140} required /></label><label>Page address (slug)<input className="store-field" name="slug" placeholder="a-short-name" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" maxLength={140} required /></label><label>Category<select className="store-field" name="category" required defaultValue=""><option value="" disabled>Choose a category</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label><label>Approved size<input className="store-field" name="variant" placeholder="30 ml" minLength={1} maxLength={80} required /></label><label>Starting price (USD)<input className="store-field" name="price" type="number" min="0.01" max="100000" step="0.01" required /></label><label>HTTPS product photograph<input className="store-field" name="image" type="url" maxLength={2000} placeholder="https://…" required /></label><label>Product description<textarea className="store-field store-textarea" name="description" minLength={2} maxLength={4000} required /></label><Button type="submit" className="store-link admin-add-button" disabled={saving || categories.length === 0}>{saving ? "Saving…" : "Save draft listing"}</Button>{error && <p className="auth-error" role="alert">{error}</p>}</form></>;
+  return <><h2 className="admin-page-heading">Product listings</h2><p className="account-lead">Publishing makes a reviewed listing visible. No checkout or product can be purchased until payments are configured.</p><div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Formulation</th><th>Starting price</th><th>Visibility</th><th>Purchases</th><th>Actions</th></tr></thead><tbody>{products.length === 0 ? <tr><td colSpan={5}>No product listings yet. Create a draft listing below to add formulations to your store.</td></tr> : products.map((product) => <tr key={product.id}><td><Link to="/product/$slug" params={{ slug: product.slug }}>{product.name}</Link><br />/{product.slug}</td><td>{formatPrice(product.price, product.currency)}</td><td>{product.is_published ? "Published" : "Draft"}</td><td>{product.is_demo ? "Demo · not for sale" : product.purchase_available ? "Available" : "Not available"}</td><td>{product.is_published ? <Button type="button" variant="ghost" size="sm" onClick={() => void unpublish(product.id)}>Unpublish</Button> : <Button type="button" variant="ghost" size="sm" onClick={() => void publish(product)}>Publish</Button>}</td></tr>)}</tbody></table></div><h3 className="admin-subheading">Create a draft listing</h3><form className="admin-add-form" onSubmit={submit}><label>Product name<input className="store-field" name="name" minLength={2} maxLength={140} required /></label><label>Page address (slug)<input className="store-field" name="slug" placeholder="a-short-name" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" maxLength={140} required /></label><label>Category<select className="store-field" name="category" required defaultValue=""><option value="" disabled>Choose a category</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label><label>Approved size<input className="store-field" name="variant" placeholder="30 ml" minLength={1} maxLength={80} required /></label><label>Starting price (USD)<input className="store-field" name="price" type="number" min="0.01" max="100000" step="0.01" required /></label><label>Product photograph URL or path<input className="store-field" name="image" type="text" maxLength={2000} placeholder="/site-assets/zorvellae-hero.webp or https://…" required /></label><label>Product description<textarea className="store-field store-textarea" name="description" minLength={2} maxLength={4000} required /></label><Button type="submit" className="store-link admin-add-button" disabled={saving || categories.length === 0}>{saving ? "Saving…" : "Save draft listing"}</Button>{error && <p className="auth-error" role="alert">{error}</p>}</form></>;
 }
