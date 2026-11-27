@@ -15,6 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { StoreProvider } from "@/components/storefront";
 import { Toaster } from "@/components/ui/sonner";
+import { initWebVitalsReporting } from "@/lib/web-vitals";
 
 function NotFoundComponent() {
   return (
@@ -93,12 +94,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
-      { rel: "icon", type: "image/png", href: "/assets/aistudio/ZORVELLAE_skin_care_logo_5d68bf3f.png" },
-      { rel: "shortcut icon", type: "image/png", href: "/assets/aistudio/ZORVELLAE_skin_care_logo_5d68bf3f.png" },
-      { rel: "apple-touch-icon", href: "/assets/aistudio/ZORVELLAE_skin_care_logo_5d68bf3f.png" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" },
+      { rel: "icon", href: "/favicon.ico", sizes: "any" },
+      { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32x32.png" },
+      { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon-16x16.png" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
+      {
+        rel: "preload",
+        as: "font",
+        type: "font/woff2",
+        href: "/fonts/playfair-display-latin.woff2",
+        crossOrigin: "anonymous",
+      },
+      {
+        rel: "preload",
+        as: "font",
+        type: "font/woff2",
+        href: "/fonts/inter-latin.woff2",
+        crossOrigin: "anonymous",
+      },
       {
         rel: "stylesheet",
         href: appCss,
@@ -130,12 +143,16 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
+    const cleanupVitals = initWebVitalsReporting();
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
       if (event !== "SIGNED_OUT") void queryClient.invalidateQueries();
     });
-    return () => data.subscription.unsubscribe();
+    return () => {
+      cleanupVitals();
+      data.subscription.unsubscribe();
+    };
   }, [queryClient, router]);
 
   return (

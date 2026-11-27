@@ -1,0 +1,38 @@
+name: Performance & Lighthouse CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  perf-budgets-and-lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run typecheck and unit tests
+        run: npx tsc --noEmit && npm test
+
+      - name: Build production bundle
+        run: npm run build
+
+      - name: Enforce bundle, CSS, image, font, and above-the-fold budgets
+        run: npm run perf:check
+
+      - name: Run Lighthouse CI on mobile routes
+        run: npx --yes @lhci/cli@0.14.0 autorun
+        env:
+          PORT: "3000"
+          HOST: "127.0.0.1"

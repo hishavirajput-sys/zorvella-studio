@@ -9,6 +9,52 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+const nitroConfig = {
+  preset: "node-server",
+  routeRules: {
+    "/assets/**": {
+      headers: {
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
+    },
+    "/fonts/**": {
+      headers: {
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
+    },
+    "/site-assets/**": {
+      headers: {
+        "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
+      },
+    },
+    "/favicon.ico": {
+      headers: {
+        "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
+      },
+    },
+    "/favicon-16x16.png": {
+      headers: {
+        "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
+      },
+    },
+    "/favicon-32x32.png": {
+      headers: {
+        "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
+      },
+    },
+    "/apple-touch-icon.png": {
+      headers: {
+        "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
+      },
+    },
+    "/api/**": {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+      },
+    },
+  },
+} as Exclude<NonNullable<Parameters<typeof defineConfig>[0]>["nitro"], undefined>;
+
 export default defineConfig({
   vite: {
     server: {
@@ -17,9 +63,7 @@ export default defineConfig({
       allowedHosts: true,
     },
   },
-  nitro: {
-    preset: "node-server",
-  },
+  nitro: nitroConfig,
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this

@@ -328,6 +328,17 @@ export const Route = createFileRoute("/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [
+      {
+        rel: "preload",
+        as: "image",
+        type: "image/avif",
+        imageSrcSet:
+          "/site-assets/hero/hero-640w.avif 640w, /site-assets/hero/hero-960w.avif 960w, /site-assets/hero/hero-1376w.avif 1376w",
+        imageSizes: "100vw",
+        fetchPriority: "high",
+      },
+    ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(catalogQueryOptions()),
   component: HomePage,
@@ -408,11 +419,30 @@ function HomePage() {
     <Storefront>
       <section className="home-hero-canvas">
         <div className="home-hero-media">
-          <img
-            src="/site-assets/generated/zorvellae_hero_sharp_1795752527388.jpg"
-            alt="ZORVELLAE Active Botanical Oil Night Repair and Ultra-Restorative Serum bottles on travertine stone"
-            referrerPolicy="no-referrer"
-          />
+          <picture>
+            <source
+              type="image/avif"
+              srcSet="/site-assets/hero/hero-640w.avif 640w, /site-assets/hero/hero-960w.avif 960w, /site-assets/hero/hero-1376w.avif 1376w"
+              sizes="100vw"
+            />
+            <source
+              type="image/webp"
+              srcSet="/site-assets/hero/hero-640w.webp 640w, /site-assets/hero/hero-960w.webp 960w, /site-assets/hero/hero-1376w.webp 1376w"
+              sizes="100vw"
+            />
+            <img
+              src="/site-assets/hero/hero-960w.jpg"
+              srcSet="/site-assets/hero/hero-960w.jpg 960w"
+              sizes="100vw"
+              width={1376}
+              height={768}
+              alt="ZORVELLAE Active Botanical Oil Night Repair and Ultra-Restorative Serum bottles on travertine stone"
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+              referrerPolicy="no-referrer"
+            />
+          </picture>
           <div className="home-hero-scrim" aria-hidden="true" />
         </div>
 
