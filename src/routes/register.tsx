@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 
-import { SignInOptions, startSocialSignIn, Storefront } from "@/components/storefront";
+import { SignInOptions, startSocialSignIn } from "@/components/auth-options";
+import { ResponsiveStoreImage } from "@/components/responsive-image";
+import { Storefront } from "@/components/storefront";
 import { hasExternalSupabaseConfig, supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/register")({
@@ -60,10 +62,10 @@ function RegisterPage() {
           <h1>A more considered ritual starts here.</h1>
           <p>Create an account to keep your saved formulations, delivery details, and order history close at hand.</p>
           <span className="auth-editorial-image">
-            <img
+            <ResponsiveStoreImage
               src="/site-assets/generated/editorial_our_science_1795670127021.jpg"
               alt="Formulator working inside the serene ZORVELLAE studio laboratory"
-              referrerPolicy="no-referrer"
+              sizes="(max-width: 900px) 92vw, 44vw"
             />
           </span>
         </aside>

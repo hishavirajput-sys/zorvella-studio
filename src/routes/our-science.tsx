@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, Check, FlaskConical, Microscope, ShieldCheck } from "lucide-react";
 
+import { ResponsiveStoreImage } from "@/components/responsive-image";
 import { PageHeading, Storefront } from "@/components/storefront";
 import { publishedPageContentQueryOptions } from "@/lib/page-content";
 
@@ -130,11 +131,10 @@ function OurSciencePage() {
       <section className="editorial-section science-trial-section">
         <div className="editorial-home-panel science-trial-panel">
           <div className="editorial-home-image">
-            <img
+            <ResponsiveStoreImage
               src="/site-assets/generated/editorial_ingredients_macro_1795670127823.jpg"
               alt="Macro study of cold-pressed botanical lipids, centella leaves, and colloidal oat extracts"
-              loading="lazy"
-              referrerPolicy="no-referrer"
+              sizes="(max-width: 900px) 92vw, 44vw"
             />
           </div>
           <div className="editorial-home-copy">

@@ -13,11 +13,16 @@ export interface WebVitalSample {
 }
 
 const DEFAULT_ENDPOINT = "/api/vitals";
+const DISABLED_ENDPOINTS = new Set(["disabled", "off", "none", "false"]);
 
-function getEndpoint(): string {
+function getEndpoint(): string | null {
   const configured = import.meta.env["VITE_WEB_VITALS_ENDPOINT"];
   if (typeof configured === "string" && configured.trim().length > 0) {
-    return configured.trim();
+    const trimmed = configured.trim();
+    if (DISABLED_ENDPOINTS.has(trimmed.toLowerCase())) {
+      return null;
+    }
+    return trimmed;
   }
   return DEFAULT_ENDPOINT;
 }
@@ -57,6 +62,7 @@ function normalizeValue(metric: VitalMetricName, value: number): number {
 
 function sendSample(sample: WebVitalSample) {
   const endpoint = getEndpoint();
+  if (!endpoint) return;
   const payload = JSON.stringify(sample);
 
   try {
@@ -69,7 +75,7 @@ function sendSample(sample: WebVitalSample) {
       headers: { "content-type": "application/json" },
       body: payload,
       keepalive: true,
-    });
+    }).catch(() => {});
   } catch {
     // Non-blocking telemetry: ignore transport failures silently.
   }
@@ -78,7 +84,7 @@ function sendSample(sample: WebVitalSample) {
 let initialized = false;
 
 export function initWebVitalsReporting(): () => void {
-  if (initialized || typeof window === "undefined" || typeof PerformanceObserver === "undefined") {
+  if (initialized || typeof window === "undefined" || typeof PerformanceObserver === "undefined" || !getEndpoint()) {
     return () => {};
   }
   initialized = true;

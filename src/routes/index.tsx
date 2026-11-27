@@ -14,8 +14,8 @@ import {
   Star,
   X,
 } from "lucide-react";
-import { toast } from "sonner";
 
+import { ResponsiveStoreImage } from "@/components/responsive-image";
 import {
   ProductGrid,
   Storefront,
@@ -24,6 +24,7 @@ import {
   useStoreCart,
 } from "@/components/storefront";
 import { Button } from "@/components/ui/button";
+import { notify } from "@/lib/notify";
 import { catalogQueryOptions } from "@/lib/store-data";
 
 const values = [
@@ -376,14 +377,14 @@ function HomePage() {
       .filter((product): product is NonNullable<typeof product> => Boolean(product));
 
     if (matched.length === 0) {
-      toast.info("Browse individual steps in the catalog.");
+      notify.info("Browse individual steps in the catalog.");
       return;
     }
 
     for (const product of matched) {
       await addItem(product);
     }
-    toast.success(`${ritualTitle} steps added to your bag.`);
+    notify.success(`${ritualTitle} steps added to your bag.`);
   }
 
   const currentQuestion = diagnosticQuestions[diagnosticStep];
@@ -525,7 +526,11 @@ function HomePage() {
               params={{ slug: step.slug }}
             >
               <span className="step-image">
-                <img src={step.image} alt={step.imageAlt} loading="lazy" referrerPolicy="no-referrer" />
+                <ResponsiveStoreImage
+                  src={step.image}
+                  alt={step.imageAlt}
+                  sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 24vw"
+                />
                 <span className="step-index">Step {step.number}</span>
               </span>
               <span className="step-copy">
@@ -559,27 +564,24 @@ function HomePage() {
         <div className="home-science-layout">
           <div className="home-research-collage" aria-label="Illustrative botanical research imagery">
             <figure className="collage-card collage-media">
-              <img
+              <ResponsiveStoreImage
                 src="/site-assets/generated/editorial_ingredients_macro_1795670127823.jpg"
                 alt="Fresh centella leaves, rosehip lipid drops, and oat grains studied for hydration"
-                loading="lazy"
-                referrerPolicy="no-referrer"
+                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 280px"
               />
             </figure>
             <figure className="collage-card collage-media">
-              <img
+              <ResponsiveStoreImage
                 src="/site-assets/generated/product_barrier_serum_1795670125183.jpg"
                 alt="Frosted amber bio-peptide barrier serum bottle on warm travertine stone"
-                loading="lazy"
-                referrerPolicy="no-referrer"
+                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 280px"
               />
             </figure>
             <figure className="collage-card collage-media">
-              <img
+              <ResponsiveStoreImage
                 src="/site-assets/generated/editorial_our_science_1795670127021.jpg"
                 alt="Dermatological formulation researcher evaluating clean botanical batches"
-                loading="lazy"
-                referrerPolicy="no-referrer"
+                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 280px"
               />
             </figure>
             <div className="collage-card collage-spec-card">
@@ -634,11 +636,10 @@ function HomePage() {
           {curatedRituals.map((ritual) => (
             <article className="home-ritual-feature" key={ritual.id}>
               <div className="home-ritual-image">
-                <img
+                <ResponsiveStoreImage
                   src={ritual.image}
                   alt={ritual.imageAlt}
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
+                  sizes="(max-width: 768px) 92vw, 44vw"
                 />
                 <span className="ritual-saving-tag">{ritual.saving}</span>
               </div>
@@ -712,11 +713,10 @@ function HomePage() {
           {dispatches.map((entry) => (
             <article className="home-dispatch-card" key={entry.id}>
               <span className="home-dispatch-image">
-                <img
+                <ResponsiveStoreImage
                   src={entry.image}
                   alt={entry.imageAlt}
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
+                  sizes="(max-width: 768px) 92vw, 31vw"
                 />
               </span>
               <span className="section-kicker">{entry.kicker}</span>

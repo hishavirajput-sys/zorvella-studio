@@ -4,6 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, Check, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 
+import { ResponsiveStoreImage } from "@/components/responsive-image";
 import { PageHeading, ProductCard, Storefront, formatPrice, productStartingPrice, useStoreCart } from "@/components/storefront";
 import { Button } from "@/components/ui/button";
 import { catalogQueryOptions } from "@/lib/store-data";
@@ -449,11 +450,10 @@ function SkinConcernsPage() {
             </div>
           </div>
           <figure className="concern-cta-media">
-            <img
+            <ResponsiveStoreImage
               src="/site-assets/generated/consultation_skincare_specialist_1795752504253.jpg"
               alt="ZORVELLAE skincare formulation consultant guiding a personalized ritual consultation"
-              loading="lazy"
-              referrerPolicy="no-referrer"
+              sizes="(max-width: 900px) 92vw, 340px"
             />
           </figure>
         </div>

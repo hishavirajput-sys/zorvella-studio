@@ -4,6 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowLeft, Heart, ShieldCheck, Star } from "lucide-react";
 import { toast } from "sonner";
 
+import { ResponsiveStoreImage } from "@/components/responsive-image";
 import { ProductGrid, Storefront, formatPrice, isPurchasableProduct, productStartingPrice, useStoreCart } from "@/components/storefront";
 import { Button } from "@/components/ui/button";
 import { catalogQueryOptions, productQueryOptions, toggleCustomerWishlist } from "@/lib/store-data";
@@ -86,10 +87,12 @@ function ProductPage() {
       <section className="details-layout">
         <div className="product-details-photo">
           {typeof image?.["url"] === "string" && image["url"] ? (
-            <img
+            <ResponsiveStoreImage
               src={image["url"]}
               alt={typeof image["alt"] === "string" ? image["alt"] : product.name}
-              referrerPolicy="no-referrer"
+              sizes="(max-width: 900px) 92vw, 46vw"
+              loading="eager"
+              fetchPriority="high"
             />
           ) : (
             <div className="product-details-placeholder" aria-label="A ZORVELLAE product photograph is not yet available.">

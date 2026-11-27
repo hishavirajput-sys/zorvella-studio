@@ -4,6 +4,8 @@ import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import type { WebVitalSample } from "./lib/web-vitals";
 
+import { getVitalsSnapshot, recordWebVitalSample } from "./lib/vitals-store";
+
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
 };
@@ -19,45 +21,9 @@ async function getServerEntry(): Promise<ServerEntry> {
   return serverEntryPromise;
 }
 
-const MAX_VITALS_SAMPLES = 2000;
-const vitalsBuffer: WebVitalSample[] = [];
 const VALID_METRICS = new Set(["LCP", "INP", "CLS"]);
 const VALID_DEVICES = new Set(["mobile", "tablet", "desktop"]);
 const VALID_RATINGS = new Set(["good", "needs-improvement", "poor"]);
-
-function computeP75(values: number[]): number | null {
-  if (values.length === 0) return null;
-  const sorted = [...values].sort((a, b) => a - b);
-  const idx = Math.min(sorted.length - 1, Math.ceil(sorted.length * 0.75) - 1);
-  return sorted[idx] ?? null;
-}
-
-function summarizeVitalsByRouteAndDevice() {
-  const groups = new Map<string, { route: string; device: string; LCP: number[]; INP: number[]; CLS: number[] }>();
-  for (const sample of vitalsBuffer) {
-    const key = `${sample.route}::${sample.device}`;
-    let bucket = groups.get(key);
-    if (!bucket) {
-      bucket = { route: sample.route, device: sample.device, LCP: [], INP: [], CLS: [] };
-      groups.set(key, bucket);
-    }
-    bucket[sample.metric].push(sample.value);
-  }
-  return [...groups.values()].map((group) => ({
-    route: group.route,
-    device: group.device,
-    samples: {
-      LCP: group.LCP.length,
-      INP: group.INP.length,
-      CLS: group.CLS.length,
-    },
-    p75: {
-      LCP: computeP75(group.LCP),
-      INP: computeP75(group.INP),
-      CLS: computeP75(group.CLS),
-    },
-  }));
-}
 
 async function handleVitalsRequest(request: Request): Promise<Response> {
   const noStoreHeaders = {
@@ -66,13 +32,11 @@ async function handleVitalsRequest(request: Request): Promise<Response> {
   };
 
   if (request.method === "GET") {
-    return new Response(
-      JSON.stringify({
-        totalSamples: vitalsBuffer.length,
-        summary: summarizeVitalsByRouteAndDevice(),
-      }),
-      { status: 200, headers: noStoreHeaders },
-    );
+    const snapshot = await getVitalsSnapshot();
+    return new Response(JSON.stringify(snapshot), {
+      status: 200,
+      headers: noStoreHeaders,
+    });
   }
 
   if (request.method !== "POST") {
@@ -110,18 +74,16 @@ async function handleVitalsRequest(request: Request): Promise<Response> {
       timestamp: typeof raw.timestamp === "number" && Number.isFinite(raw.timestamp) ? raw.timestamp : Date.now(),
     };
 
-    vitalsBuffer.push(sanitized);
-    if (vitalsBuffer.length > MAX_VITALS_SAMPLES) {
-      vitalsBuffer.shift();
-    }
-
-    const forwardUrl = process.env["WEB_VITALS_FORWARD_URL"]?.trim();
-    if (forwardUrl) {
-      void fetch(forwardUrl, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(sanitized),
-      }).catch(() => undefined);
+    const forwardResult = await recordWebVitalSample(sanitized);
+    if (!forwardResult.ok) {
+      return new Response(
+        JSON.stringify({
+          error: "Failed to forward Web Vitals sample to collector",
+          upstreamStatus: forwardResult.upstreamStatus ?? null,
+          detail: forwardResult.error ?? "Collector request failed",
+        }),
+        { status: 502, headers: noStoreHeaders },
+      );
     }
 
     return new Response(null, {

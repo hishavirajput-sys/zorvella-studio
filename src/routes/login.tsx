@@ -2,7 +2,9 @@ import { useState, type FormEvent } from "react";
 import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 
-import { SignInOptions, startSocialSignIn, Storefront } from "@/components/storefront";
+import { SignInOptions, startSocialSignIn } from "@/components/auth-options";
+import { ResponsiveStoreImage } from "@/components/responsive-image";
+import { Storefront } from "@/components/storefront";
 import { hasExternalSupabaseConfig, supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/login")({
@@ -57,10 +59,10 @@ function LoginPage() {
           <h1>Welcome back to your ritual.</h1>
           <p>Access your saved formulations, saved shipping addresses, and order history inside one quiet apothecary space.</p>
           <span className="auth-editorial-image">
-            <img
+            <ResponsiveStoreImage
               src="/site-assets/generated/editorial_about_atelier_1795670128506.jpg"
               alt="Sunlit ZORVELLAE atelier shelving lined with amber skincare bottles"
-              referrerPolicy="no-referrer"
+              sizes="(max-width: 900px) 92vw, 44vw"
             />
           </span>
         </aside>

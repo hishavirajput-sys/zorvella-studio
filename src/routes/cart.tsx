@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, ShoppingBag } from "lucide-react";
 
+import { ResponsiveStoreImage } from "@/components/responsive-image";
 import {
   PageHeading,
   QuantityStepper,
@@ -85,7 +86,11 @@ function CartPage() {
                 const image = firstImage && typeof firstImage === "object" && !Array.isArray(firstImage) ? firstImage["url"] : null;
                 return (
                   <article className="cart-item" key={`${item.productId}-${item.variantId}`}>
-                    <div className="cart-item-image">{typeof image === "string" && <img src={image} alt={product.name} referrerPolicy="no-referrer" />}</div>
+                    <div className="cart-item-image">
+                      {typeof image === "string" && (
+                        <ResponsiveStoreImage src={image} alt={product.name} sizes="100px" />
+                      )}
+                    </div>
                     <div className="cart-item-copy">
                       <span className="eyebrow">{product.category_label || "Formulation"}</span>
                       <Link className="cart-product-name" to="/product/$slug" params={{ slug: product.slug }}>

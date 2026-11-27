@@ -1,11 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import zlib from "node:zlib";
 
 const rootDir = process.cwd();
 const outputPublicDir = fs.existsSync(path.join(rootDir, ".output/public"))
   ? path.join(rootDir, ".output/public")
   : path.join(rootDir, "dist/client");
+const outputServerDir = path.join(rootDir, ".output/server");
 
 if (!fs.existsSync(outputPublicDir)) {
   console.error("Build output directory not found. Run `npm run build` first.");
@@ -13,17 +15,40 @@ if (!fs.existsSync(outputPublicDir)) {
 }
 
 const BUDGETS = {
+  maxInitialRouteJsGzipKiB: 170,
   maxSingleJsGzipKiB: 250,
   maxTotalJsGzipKiB: 500,
   maxTotalCssGzipKiB: 45,
   maxHeroAvifKiB: 60,
   maxHeroWebpKiB: 90,
   maxHeroFallbackJpgKiB: 90,
+  maxAnyStorefrontImageKiB: 140,
+  maxResponsiveAvif480KiB: 30,
+  maxResponsiveAvif800KiB: 50,
   maxFaviconKiB: 20,
-  maxSingleFontKiB: 55,
-  maxPreloadFontsKiB: 100,
+  maxSingleFontKiB: 35,
+  maxPreloadFontsKiB: 60,
   maxAboveTheFoldWireKiB: 300,
 };
+
+const STOREFRONT_MEDIA_KEYS = [
+  "product-barrier-serum",
+  "product-radiance-elixir",
+  "product-rosehip-cream",
+  "product-melt-cleanser",
+  "product-eye-balm",
+  "consultation-specialist",
+  "editorial-about-atelier",
+  "editorial-ingredients-macro",
+  "editorial-our-science",
+  "step-cleanse",
+  "step-treat",
+  "step-hydrate",
+  "step-protect",
+  "science-editorial",
+  "zorvellae-hero",
+  "zorvellae-science",
+];
 
 function walkFiles(dir) {
   if (!fs.existsSync(dir)) return [];
@@ -64,6 +89,45 @@ if (totalJsGzipKiB > BUDGETS.maxTotalJsGzipKiB) {
   failures.push(`Total JS (${totalJsGzipKiB.toFixed(1)} KiB gzip) exceeds ${BUDGETS.maxTotalJsGzipKiB} KiB`);
 }
 
+let initialRouteJsGzipKiB = 0;
+let initialRouteFiles = [];
+const manifestFile = fs.existsSync(outputServerDir)
+  ? fs.readdirSync(outputServerDir).find((name) => name.startsWith("_tanstack-start-manifest_v-") && name.endsWith(".mjs"))
+  : undefined;
+
+if (!manifestFile) {
+  failures.push("Missing TanStack Start client asset manifest in .output/server for initial-route JS verification.");
+} else {
+  const mod = await import(pathToFileURL(path.join(outputServerDir, manifestFile)).href);
+  const manifest = typeof mod.tsrStartManifest === "function" ? mod.tsrStartManifest() : null;
+  const rootRoute = manifest?.routes?.__root__;
+  const homeRoute = manifest?.routes?.["/"];
+  if (!rootRoute || !homeRoute) {
+    failures.push("Client manifest is missing __root__ or / route entries.");
+  } else {
+    const urls = new Set([
+      ...(rootRoute.scripts ?? []).map((entry) => entry?.attrs?.src).filter(Boolean),
+      ...(rootRoute.preloads ?? []),
+      ...(homeRoute.preloads ?? []),
+    ]);
+    initialRouteFiles = [...urls];
+    for (const urlPath of urls) {
+      const cleanRel = String(urlPath).replace(/^\/+/, "");
+      const fullPath = path.join(outputPublicDir, cleanRel);
+      if (!fs.existsSync(fullPath)) {
+        failures.push(`Missing initial-route JS asset: ${urlPath}`);
+      } else {
+        initialRouteJsGzipKiB += gzipKiB(fullPath);
+      }
+    }
+    if (initialRouteJsGzipKiB > BUDGETS.maxInitialRouteJsGzipKiB) {
+      failures.push(
+        `Initial-route / JS (${initialRouteJsGzipKiB.toFixed(1)} KiB gzip across ${urls.size} chunks) exceeds ${BUDGETS.maxInitialRouteJsGzipKiB} KiB`,
+      );
+    }
+  }
+}
+
 let totalCssGzipKiB = 0;
 let totalCssRawKiB = 0;
 for (const file of cssFiles) {
@@ -94,6 +158,36 @@ for (const item of requiredHeroAssets) {
     if (kb > item.limit) {
       failures.push(`Hero asset ${item.name} (${kb.toFixed(1)} KiB) exceeds ${item.limit} KiB`);
     }
+  }
+}
+
+const mediaDir = path.join(outputPublicDir, "site-assets/media");
+for (const key of STOREFRONT_MEDIA_KEYS) {
+  const itemDir = path.join(mediaDir, key);
+  for (const variant of ["480w.avif", "800w.avif", "480w.webp", "800w.webp"]) {
+    const full = path.join(itemDir, variant);
+    if (!fs.existsSync(full)) {
+      failures.push(`Missing responsive storefront media variant: ${key}/${variant}`);
+    } else if (variant === "480w.avif" && sizeKiB(full) > BUDGETS.maxResponsiveAvif480KiB) {
+      failures.push(`Media ${key}/480w.avif (${sizeKiB(full).toFixed(1)} KiB) exceeds ${BUDGETS.maxResponsiveAvif480KiB} KiB`);
+    } else if (variant === "800w.avif" && sizeKiB(full) > BUDGETS.maxResponsiveAvif800KiB) {
+      failures.push(`Media ${key}/800w.avif (${sizeKiB(full).toFixed(1)} KiB) exceeds ${BUDGETS.maxResponsiveAvif800KiB} KiB`);
+    }
+  }
+}
+
+const siteAssetFiles = walkFiles(path.join(outputPublicDir, "site-assets"));
+let largestSiteImage = { file: "", sizeKiB: 0 };
+for (const file of siteAssetFiles) {
+  if (!/\.(avif|webp|jpe?g|png)$/i.test(file)) continue;
+  const kb = sizeKiB(file);
+  if (kb > largestSiteImage.sizeKiB) {
+    largestSiteImage = { file: path.relative(outputPublicDir, file), sizeKiB: Number(kb.toFixed(1)) };
+  }
+  if (kb > BUDGETS.maxAnyStorefrontImageKiB) {
+    failures.push(
+      `Oversized storefront asset ${path.relative(outputPublicDir, file)} (${kb.toFixed(1)} KiB) exceeds ${BUDGETS.maxAnyStorefrontImageKiB} KiB`,
+    );
   }
 }
 
@@ -147,12 +241,15 @@ console.log(
   JSON.stringify(
     {
       outputFiles: allFiles.length,
+      initialRouteChunkCount: initialRouteFiles.length,
+      initialRouteJsGzipKiB: Number(initialRouteJsGzipKiB.toFixed(1)),
       totalJsRawKiB: Number(totalJsRawKiB.toFixed(1)),
       totalJsGzipKiB: Number(totalJsGzipKiB.toFixed(1)),
       totalCssRawKiB: Number(totalCssRawKiB.toFixed(1)),
       totalCssGzipKiB: Number(totalCssGzipKiB.toFixed(1)),
       preloadedFontsKiB: Number(preloadedFontsKiB.toFixed(1)),
       heroDesktopAvifKiB: Number(heroDesktopAvifKiB.toFixed(1)),
+      largestSiteImage,
       aboveTheFoldWireKiB: Number(aboveTheFoldWireKiB.toFixed(1)),
     },
     null,

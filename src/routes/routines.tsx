@@ -4,6 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, Clock, Droplets, ShoppingBag, SunMoon } from "lucide-react";
 import { toast } from "sonner";
 
+import { ResponsiveStoreImage } from "@/components/responsive-image";
 import { PageHeading, Storefront, formatPrice, isPurchasableProduct, productStartingPrice, useStoreCart } from "@/components/storefront";
 import { Button } from "@/components/ui/button";
 import { catalogQueryOptions } from "@/lib/store-data";
@@ -398,7 +399,11 @@ function RoutinesPage() {
               return (
                 <article className="routine-step-card" key={`${activeCadence.id}-${step.stepNumber}`}>
                   <div className="routine-step-media">
-                    <img src={step.image} alt={step.imageAlt} loading="lazy" referrerPolicy="no-referrer" />
+                    <ResponsiveStoreImage
+                      src={step.image}
+                      alt={step.imageAlt}
+                      sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 24vw"
+                    />
                     <span className="step-index">
                       Step {step.stepNumber} · {step.label}
                     </span>
@@ -458,7 +463,11 @@ function RoutinesPage() {
           {RITUAL_BUNDLES.map((ritual) => (
             <article className="home-ritual-feature" key={ritual.id}>
               <div className="home-ritual-image">
-                <img src={ritual.image} alt={ritual.imageAlt} loading="lazy" referrerPolicy="no-referrer" />
+                <ResponsiveStoreImage
+                  src={ritual.image}
+                  alt={ritual.imageAlt}
+                  sizes="(max-width: 768px) 92vw, 44vw"
+                />
                 <span className="ritual-saving-tag">{ritual.badge}</span>
               </div>
               <div className="home-ritual-copy">
@@ -546,38 +555,34 @@ function RoutinesPage() {
             </div>
             <div className="routine-bundle-cluster" aria-label="Complete four-step skincare routine bundle">
               <figure className="routine-bundle-tile">
-                <img
+                <ResponsiveStoreImage
                   src="/site-assets/generated/product_melt_cleanser_1795670127118.jpg"
                   alt="Peptide Gentle Melt Cleanser"
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
+                  sizes="(max-width: 640px) 44vw, 220px"
                 />
                 <figcaption>01 · Melt Cleanser</figcaption>
               </figure>
               <figure className="routine-bundle-tile">
-                <img
+                <ResponsiveStoreImage
                   src="/site-assets/generated/product_barrier_serum_1795670125183.jpg"
                   alt="Ceramide Bio-Peptide Barrier Serum"
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
+                  sizes="(max-width: 640px) 44vw, 220px"
                 />
                 <figcaption>02 · Barrier Serum</figcaption>
               </figure>
               <figure className="routine-bundle-tile">
-                <img
+                <ResponsiveStoreImage
                   src="/site-assets/generated/product_rosehip_cream_1795670125752.jpg"
                   alt="Squalane Fermented Rosehip Cream"
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
+                  sizes="(max-width: 640px) 44vw, 220px"
                 />
                 <figcaption>03 · Rosehip Cream</figcaption>
               </figure>
               <figure className="routine-bundle-tile">
-                <img
+                <ResponsiveStoreImage
                   src="/site-assets/generated/product_eye_balm_1795670126729.jpg"
                   alt="Restorative Peptide Eye Balm"
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
+                  sizes="(max-width: 640px) 44vw, 220px"
                 />
                 <figcaption>04 · Peptide Eye Balm</figcaption>
               </figure>

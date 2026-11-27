@@ -8,14 +8,17 @@ import {
   Scripts,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { lazy, Suspense, useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { StoreProvider } from "@/components/storefront";
-import { Toaster } from "@/components/ui/sonner";
 import { initWebVitalsReporting } from "@/lib/web-vitals";
+
+const LazyToaster = lazy(() =>
+  import("@/components/ui/sonner").then((m) => ({ default: m.Toaster })),
+);
 
 function NotFoundComponent() {
   return (
@@ -160,7 +163,9 @@ function RootComponent() {
       <StoreProvider>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
-        <Toaster position="top-right" />
+        <Suspense fallback={null}>
+          <LazyToaster position="top-right" />
+        </Suspense>
       </StoreProvider>
     </QueryClientProvider>
   );

@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, Leaf, ShieldCheck, Sparkles } from "lucide-react";
 
+import { ResponsiveStoreImage } from "@/components/responsive-image";
 import { PageHeading, Storefront } from "@/components/storefront";
 import { publishedPageContentQueryOptions } from "@/lib/page-content";
 
@@ -70,11 +71,10 @@ function AboutPage() {
       <section className="article-section">
         <div className="editorial-home-panel">
           <div className="editorial-home-image">
-            <img
+            <ResponsiveStoreImage
               src="/site-assets/home/science-editorial.webp"
               alt="ZORVELLAE ceramic formulation tray and clinical pipettes in daylight"
-              loading="lazy"
-              referrerPolicy="no-referrer"
+              sizes="(max-width: 900px) 92vw, 44vw"
             />
           </div>
           <div className="editorial-home-copy">

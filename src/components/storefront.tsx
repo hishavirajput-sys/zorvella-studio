@@ -23,12 +23,12 @@ import {
   UserRound,
   X,
 } from "lucide-react";
-import { toast } from "sonner";
-import { LovableMark } from "@lovable.dev/cloud-auth-js/react";
 
 import serumImage from "@/assets/zorvellae-serum-editorial.png.asset.json";
+import { ResponsiveStoreImage } from "@/components/responsive-image";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { notify } from "@/lib/notify";
 import {
   calculateCartSubtotal,
   formatPrice,
@@ -83,7 +83,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       if (userId) {
         const { data, error } = await supabase.from("carts").select("items").eq("user_id", userId).maybeSingle();
         if (!mounted) return;
-        if (error) toast.error("Your saved bag could not be loaded.");
+        if (error) notify.error("Your saved bag could not be loaded.");
         const cart = Array.isArray(data?.items) ? (data.items as unknown as CartItem[]) : [];
         setItems(cart.filter((item) => item && typeof item.productId === "string" && typeof item.variantId === "string" && Number.isSafeInteger(item.quantity) && item.quantity > 0 && item.quantity <= 99));
       } else {
@@ -114,7 +114,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     try {
       await saveCustomerCart(next);
     } catch {
-      toast.error("Your bag could not be saved. Please try again.");
+      notify.error("Your bag could not be saved. Please try again.");
       const { data } = await supabase.from("carts").select("items").eq("user_id", identityKey).maybeSingle();
       setItems(Array.isArray(data?.items) ? (data.items as unknown as CartItem[]) : []);
     }
@@ -122,7 +122,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const addItem = useCallback(async (product: StoreProduct, variantId?: string) => {
     if (!isPurchasableProduct(product)) {
-      toast.error("This formulation is not available for purchase.");
+      notify.error("This formulation is not available for purchase.");
       return;
     }
     const variant = Array.isArray(product.variants)
@@ -133,19 +133,19 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const firstVariantId = firstVariant && typeof firstVariant === "object" && !Array.isArray(firstVariant) ? firstVariant["id"] : undefined;
     const id = typeof variantIdValue === "string" ? variantIdValue : typeof firstVariantId === "string" ? firstVariantId : "";
     if (!id) {
-      toast.error("This formulation has no available size.");
+      notify.error("This formulation has no available size.");
       return;
     }
     const entry = items.find((item) => item.productId === product.id && item.variantId === id);
     if (entry && entry.quantity >= 99) {
-      toast.error("A maximum of 99 per size can be added.");
+      notify.error("A maximum of 99 per size can be added.");
       return;
     }
     const next = entry
       ? items.map((item) => item === entry ? { ...item, quantity: item.quantity + 1 } : item)
       : [...items, { productId: product.id, variantId: id, quantity: 1 }];
     await persistCart(next);
-    toast.success(`${product.name} added to your bag.`);
+    notify.success(`${product.name} added to your bag.`);
   }, [items, persistCart]);
 
   const changeQuantity = useCallback(async (productId: string, variantId: string, quantity: number) => {
@@ -258,6 +258,8 @@ function StoreHeader() {
             src="/site-assets/generated/zorvellae-logo-dark.png"
             alt="ZORVELLAE — Science-Led Skincare"
             className="brand-logo"
+            width={180}
+            height={60}
           />
         </Link>
         <nav className={`store-nav ${menuOpen ? "store-nav-open" : ""}`} aria-label="Main navigation">
@@ -351,7 +353,7 @@ export function StoreFooter() {
     event.preventDefault();
     const cleaned = email.trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleaned)) {
-      toast.error("Please enter a valid email address.");
+      notify.error("Please enter a valid email address.");
       return;
     }
     const { data } = await supabase
@@ -368,7 +370,7 @@ export function StoreFooter() {
       .upsert({ setting_key: "newsletter.subscribers", setting_value: next });
     setSubscribed(true);
     setEmail("");
-    toast.success("Welcome to the ZORVELLAE Circle.");
+    notify.success("Welcome to the ZORVELLAE Circle.");
   }
 
   return (
@@ -380,6 +382,9 @@ export function StoreFooter() {
               src="/site-assets/generated/zorvellae-logo-ivory.png"
               alt="ZORVELLAE — Science-Led Skincare"
               className="footer-logo"
+              width={180}
+              height={60}
+              loading="lazy"
             />
           </Link>
           <p>
@@ -466,7 +471,15 @@ export function PageHeading({
         <h1 className="editorial-title">{title}</h1>
         {description && <p>{description}</p>}
       </div>
-      <div className="page-heading-visual"><img src={imageSrc} alt={imageAlt} loading="lazy" referrerPolicy="no-referrer" /></div>
+      <div className="page-heading-visual">
+        <ResponsiveStoreImage
+          src={imageSrc}
+          alt={imageAlt}
+          sizes="(max-width: 900px) 92vw, 44vw"
+          loading="eager"
+          fetchPriority="high"
+        />
+      </div>
     </div>
   );
 }
@@ -490,11 +503,10 @@ export function ProductCard({ product, onQuickAdd }: { product: StoreProduct; on
     <article className="product-card">
       <Link className="product-image-frame" to="/product/$slug" params={{ slug: product.slug }} aria-label={`View ${product.name}`}>
         {hasImage ? (
-          <img
+          <ResponsiveStoreImage
             src={imageUrl}
             alt={typeof imageAlt === "string" ? imageAlt : product.name}
-            loading="lazy"
-            referrerPolicy="no-referrer"
+            sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 24vw"
             onError={() => setImageError(true)}
           />
         ) : (
@@ -516,9 +528,9 @@ export function ProductCard({ product, onQuickAdd }: { product: StoreProduct; on
             event.stopPropagation();
             try {
               await toggleCustomerWishlist(product.id);
-              toast.success("Your saved formulations were updated.");
+              notify.success("Your saved formulations were updated.");
             } catch {
-              toast.error("Sign in to save formulations.");
+              notify.error("Sign in to save formulations.");
             }
           }}
         >
@@ -566,27 +578,6 @@ export function ProductGrid({ products, onQuickAdd = true }: { products: StorePr
 
 export function CategoryCard({ category }: { category: StoreCategory }) {
   return <Link className="category-list-item" to="/shop/category/$slug" params={{ slug: category.slug }}><span className="category-list-number">{String(category.sort_order).padStart(2, "0")}</span><span>{category.name}</span><ArrowUpRight size={15} aria-hidden="true" /></Link>;
-}
-
-export function SignInOptions({ onGoogle, onLovable, loading }: { onGoogle: () => void; onLovable: () => void; loading: boolean }) {
-  return (
-    <div className="auth-provider-options">
-      <Button type="button" variant="outline" disabled={loading} className="provider-button" onClick={onGoogle}>
-        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
-        Continue with Google
-      </Button>
-      <Button type="button" variant="outline" disabled={loading} className="provider-button" onClick={onLovable}>
-        <LovableMark className="lovable-mark" /> Continue with Lovable
-      </Button>
-    </div>
-  );
-}
-
-export async function startSocialSignIn(provider: "google" | "lovable") {
-  const { lovable } = await import("@/integrations/lovable/index");
-  const result = await lovable.auth.signInWithOAuth(provider, { redirect_uri: window.location.origin });
-  if (result.error) throw result.error;
-  if (!result.redirected) window.location.assign("/account");
 }
 
 export function QuantityStepper({ quantity, onChange }: { quantity: number; onChange: (nextQuantity: number) => void }) {
