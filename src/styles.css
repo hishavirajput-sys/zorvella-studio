@@ -112,6 +112,10 @@
 
 @layer base {
   * { border-color: var(--color-border); }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 90px;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -131,7 +135,24 @@
 }
 
 @layer components {
-  .site-frame { min-width: 0; color: var(--espresso); background: var(--ivory); }
+  .site-frame {
+    min-width: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    color: var(--espresso);
+    background: var(--ivory);
+  }
+  .site-frame > main {
+    flex: 1 0 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .site-frame > main > .auth-layout {
+    margin-block: auto;
+  }
   .announcement-bar { min-height: 32px; padding: 7px 24px; display: flex; align-items: center; justify-content: space-between; gap: 14px; background: var(--blush); color: var(--espresso); font-size: 9px; font-weight: 500; text-align: center; text-transform: uppercase; line-height: 1.4; }
   .store-header { position: sticky; z-index: 30; top: 0; background: var(--header-surface); border-bottom: 1px solid color-mix(in oklab, var(--espresso) 10%, transparent); }
   .store-header-inner { width: min(100%,1424px); min-height: 76px; margin-inline: auto; padding: 12px clamp(16px,4.2vw,54px); display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 24px; }
@@ -660,7 +681,7 @@
 
   .store-header-inner { min-height: 76px; }
   .brand-name { font-size: 27px; }
-  .brand-logo { display: block; height: 46px; width: auto; max-width: 165px; object-fit: contain; mix-blend-mode: multiply; }
+  .brand-logo { display: block; height: 46px; width: auto; max-width: 165px; object-fit: contain; border: 0; background: transparent; }
   .store-nav > a { position: relative; padding-block: 8px; white-space: nowrap; letter-spacing: 0.65px; }
   .store-nav > a::after { position: absolute; right: 50%; bottom: 1px; left: 50%; height: 1px; background: var(--moss); content: ""; transition: left 180ms ease, right 180ms ease; }
   .store-nav > a:hover::after, .store-nav > a[aria-current="page"]::after { right: 0; left: 0; }
@@ -726,26 +747,26 @@
     height: 100%;
     display: block;
     object-fit: cover;
-    object-position: 70% 42%;
+    object-position: right center;
   }
   .home-hero-scrim {
     position: absolute;
     inset: 0;
     background: linear-gradient(
       92deg,
-      color-mix(in oklab, var(--ivory) 96%, transparent) 0%,
-      color-mix(in oklab, var(--ivory) 90%, transparent) 41%,
-      color-mix(in oklab, var(--ivory) 42%, transparent) 64%,
-      color-mix(in oklab, var(--ivory) 8%, transparent) 100%
+      color-mix(in oklab, var(--ivory) 94%, transparent) 0%,
+      color-mix(in oklab, var(--ivory) 84%, transparent) 36%,
+      color-mix(in oklab, var(--ivory) 24%, transparent) 54%,
+      transparent 66%
     );
   }
   .home-hero-inner {
     position: relative;
     z-index: 2;
     width: min(100%, 1340px);
-    min-height: 540px;
+    min-height: clamp(520px, 43vw, 640px);
     margin-inline: auto;
-    padding: clamp(46px, 6vw, 84px) clamp(20px, 5vw, 56px) clamp(40px, 5vw, 64px);
+    padding: clamp(44px, 5.5vw, 78px) clamp(20px, 5vw, 56px) clamp(38px, 4.5vw, 58px);
     display: flex;
     align-items: center;
   }
@@ -1034,39 +1055,52 @@
     margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
     gap: 18px;
   }
   .testimonial-card {
-    padding: 24px;
+    padding: 28px;
     background: var(--surface-raised);
     border: 1px solid var(--line);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 14px;
+    text-align: left;
   }
-  .testimonial-stars { display: flex; gap: 3px; color: var(--terracotta); }
+  .testimonial-stars { display: flex; align-items: center; gap: 3px; color: var(--terracotta); }
   .testimonial-card blockquote {
     margin: 0;
     font-family: var(--font-editorial);
     font-style: italic;
     font-size: 18px;
-    line-height: 1.42;
+    line-height: 1.48;
+    letter-spacing: 0;
     color: var(--espresso);
+    text-align: left;
+    text-wrap: pretty;
   }
-  .testimonial-detail { margin: 0; font-size: 11px; line-height: 1.65; color: var(--muted-foreground); }
+  .testimonial-detail {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.68;
+    letter-spacing: 0;
+    color: var(--muted-foreground);
+    text-align: left;
+  }
   .testimonial-author {
-    margin-top: 4px;
-    padding-top: 14px;
+    margin-top: auto;
+    padding-top: 16px;
     border-top: 1px solid var(--line);
     display: flex;
     align-items: center;
-    gap: 11px;
+    gap: 12px;
   }
+  .testimonial-author > div { min-width: 0; }
   .testimonial-avatar {
-    width: 32px;
-    height: 32px;
-    flex: 0 0 32px;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
     border-radius: 999px;
     display: grid;
     place-items: center;
@@ -1074,9 +1108,24 @@
     color: var(--espresso);
     font-size: 10px;
     font-weight: 600;
+    letter-spacing: 0.04em;
   }
-  .testimonial-author strong { display: block; font-size: 10px; letter-spacing: 0.6px; text-transform: uppercase; color: var(--espresso); }
-  .testimonial-author span { display: block; font-size: 10px; color: var(--muted-foreground); }
+  .testimonial-author strong {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--espresso);
+  }
+  .testimonial-author span {
+    display: block;
+    margin-top: 2px;
+    font-size: 10.5px;
+    line-height: 1.4;
+    color: var(--muted-foreground);
+  }
 
   /* Modals for Diagnostic & Dispatches */
   .store-modal-backdrop {
@@ -1151,8 +1200,8 @@
     gap: 36px;
     padding-bottom: 50px;
   }
-  .footer-brand-link { display: inline-block; text-decoration: none; }
-  .footer-logo { display: block; height: 52px; width: auto; max-width: 180px; object-fit: contain; filter: invert(1) brightness(1.04) contrast(1.05); mix-blend-mode: lighten; }
+  .footer-brand-link { display: inline-block; border: 0; background: transparent; text-decoration: none; }
+  .footer-logo { display: block; height: 52px; width: auto; max-width: 180px; object-fit: contain; border: 0; background: transparent; }
   .footer-certification {
     margin-top: 18px;
     display: inline-flex;
@@ -1509,6 +1558,57 @@
   .concerns-guidance-inner { width: min(100%, 880px); margin-inline: auto; }
   .concerns-guidance-inner .faq-list { margin-top: 28px; }
   .concern-cta-band { margin: clamp(40px, 5vw, 60px) auto 0; }
+  .concern-cta-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+    align-items: center;
+    gap: clamp(24px, 4vw, 48px);
+  }
+  .concern-cta-media {
+    margin: 0;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    border: 1px solid color-mix(in oklab, var(--espresso) 14%, transparent);
+    background: var(--surface-raised);
+  }
+  .concern-cta-media img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: 50% 25%;
+  }
+  .routine-bundle-cluster {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .routine-bundle-tile {
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid color-mix(in oklab, var(--espresso) 14%, transparent);
+    background: var(--surface-raised);
+    display: flex;
+    flex-direction: column;
+  }
+  .routine-bundle-tile img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    display: block;
+    object-fit: cover;
+  }
+  .routine-bundle-tile figcaption {
+    padding: 7px 10px;
+    border-top: 1px solid var(--line);
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.65px;
+    text-transform: uppercase;
+    color: var(--espresso);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   /* Skincare Routines architecture & interactive cadence builder */
   .routine-builder-section {
@@ -2021,6 +2121,19 @@
   .brand-logo { height: 38px; max-width: 132px; }
   .store-nav > a::after { display: none; }
   .header-search-results { grid-template-columns: 1fr; }
+  .home-hero-canvas { display: flex; flex-direction: column; }
+  .home-hero-inner { order: 1; min-height: 0; padding: 36px clamp(16px, 5vw, 32px) 28px; }
+  .home-hero-media {
+    order: 2;
+    position: relative;
+    inset: auto;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-top: 1px solid color-mix(in oklab, var(--espresso) 10%, transparent);
+  }
+  .home-hero-media img { object-position: center center; }
+  .home-hero-scrim { display: none; }
+  .home-hero-trustbar { order: 3; }
   .section-heading-split { flex-direction: column; align-items: flex-start; gap: 10px; }
   .home-science-layout { grid-template-columns: 1fr; }
   .home-ritual-feature-grid { grid-template-columns: 1fr; }
@@ -2030,7 +2143,7 @@
   .page-heading { grid-template-columns: minmax(0, 1fr); gap: 21px; }
   .page-heading-visual { max-width: 520px; aspect-ratio: 1.85; }
   .auth-layout { grid-template-columns: 1fr; }
-  .concern-dossier-grid, .science-exclusion-card, .contact-atelier-grid, .checkout-two-column { grid-template-columns: 1fr; }
+  .concern-dossier-grid, .concern-cta-split, .science-exclusion-card, .contact-atelier-grid, .checkout-two-column { grid-template-columns: 1fr; }
   .concern-product-grid, .concern-directory-grid, .routine-steps-grid, .routine-steps-grid.is-three-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .routine-cadence-header { flex-direction: column; align-items: flex-start; }
 }
@@ -2039,21 +2152,14 @@
   .announcement-bar { grid-template-columns: 1fr auto; font-size: 8px; }
   .announcement-copy { grid-column: 1; text-align: left; }
   .announcement-link { grid-column: 2; }
-  .home-hero-scrim {
-    background: linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--ivory) 94%, transparent) 0%,
-      color-mix(in oklab, var(--ivory) 88%, transparent) 62%,
-      color-mix(in oklab, var(--ivory) 68%, transparent) 100%
-    );
-  }
-  .home-hero-inner { min-height: 0; padding: 34px 16px 28px; }
-  .home-hero-copy .home-title { font-size: 40px; }
+  .home-hero-inner { min-height: 0; padding: 30px 16px 24px; }
+  .home-hero-copy .home-title { font-size: 38px; }
   .home-hero-trustbar-inner { justify-content: flex-start; gap: 8px 10px; font-size: 8px; }
   .home-research-collage { gap: 8px; }
   .collage-card, .collage-media img { min-height: 150px; }
   .home-diagnostic-section { padding: 24px 15px; }
   .home-diagnostic-banner { padding: 24px 18px; }
+  .testimonial-card { padding: 22px; }
   .home-dispatch-card { display: flex; flex-direction: column; padding: 0 0 14px; }
   .home-dispatch-image { aspect-ratio: 1.6; }
   .home-dispatch-card > .section-kicker { margin: 14px 14px 6px; }

@@ -255,7 +255,7 @@ function StoreHeader() {
         </Button>
         <Link to="/" className="brand-lockup" aria-label="Zorvellae, home">
           <img
-            src="/assets/aistudio/ZORVELLAE_skin_care_logo_5d68bf3f.png"
+            src="/site-assets/generated/zorvellae-logo-dark.png"
             alt="ZORVELLAE — Science-Led Skincare"
             className="brand-logo"
           />
@@ -377,7 +377,7 @@ export function StoreFooter() {
         <div className="footer-brand">
           <Link to="/" className="footer-brand-link" aria-label="Zorvellae, home">
             <img
-              src="/assets/aistudio/ZORVELLAE_skin_care_logo_5d68bf3f.png"
+              src="/site-assets/generated/zorvellae-logo-ivory.png"
               alt="ZORVELLAE — Science-Led Skincare"
               className="footer-logo"
             />

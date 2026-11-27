@@ -407,13 +407,13 @@ function HomePage() {
   return (
     <Storefront>
       <section className="home-hero-canvas">
-        <div className="home-hero-media" aria-hidden="true">
+        <div className="home-hero-media">
           <img
-            src="/assets/aistudio/Zorvellae_Renew___Repair_Treatment_Elixir_and_Luminous_Elixir_serum_bottles_on_stone_slab_with_botanical_shadows_551eaf64.png"
-            alt="ZORVELLAE Renew & Repair Treatment Elixir and Luminous Elixir bottles on travertine stone"
+            src="/site-assets/generated/zorvellae_hero_sharp_1795752527388.jpg"
+            alt="ZORVELLAE Active Botanical Oil Night Repair and Ultra-Restorative Serum bottles on travertine stone"
             referrerPolicy="no-referrer"
           />
-          <div className="home-hero-scrim" />
+          <div className="home-hero-scrim" aria-hidden="true" />
         </div>
 
         <div className="home-hero-inner">

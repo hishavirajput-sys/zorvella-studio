@@ -528,7 +528,7 @@ function RoutinesPage() {
             </div>
           </div>
 
-          <div className="home-diagnostic-banner concern-cta-band">
+          <div className="home-diagnostic-banner concern-cta-band concern-cta-split">
             <div className="home-diagnostic-copy">
               <span className="section-kicker">Targeted Dermatological Guidance</span>
               <h2>Building a routine for a specific concern?</h2>
@@ -543,6 +543,44 @@ function RoutinesPage() {
                   Browse all formulations
                 </Link>
               </div>
+            </div>
+            <div className="routine-bundle-cluster" aria-label="Complete four-step skincare routine bundle">
+              <figure className="routine-bundle-tile">
+                <img
+                  src="/site-assets/generated/product_melt_cleanser_1795670127118.jpg"
+                  alt="Peptide Gentle Melt Cleanser"
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                />
+                <figcaption>01 · Melt Cleanser</figcaption>
+              </figure>
+              <figure className="routine-bundle-tile">
+                <img
+                  src="/site-assets/generated/product_barrier_serum_1795670125183.jpg"
+                  alt="Ceramide Bio-Peptide Barrier Serum"
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                />
+                <figcaption>02 · Barrier Serum</figcaption>
+              </figure>
+              <figure className="routine-bundle-tile">
+                <img
+                  src="/site-assets/generated/product_rosehip_cream_1795670125752.jpg"
+                  alt="Squalane Fermented Rosehip Cream"
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                />
+                <figcaption>03 · Rosehip Cream</figcaption>
+              </figure>
+              <figure className="routine-bundle-tile">
+                <img
+                  src="/site-assets/generated/product_eye_balm_1795670126729.jpg"
+                  alt="Restorative Peptide Eye Balm"
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                />
+                <figcaption>04 · Peptide Eye Balm</figcaption>
+              </figure>
             </div>
           </div>
         </div>

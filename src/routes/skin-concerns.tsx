@@ -432,7 +432,7 @@ function SkinConcernsPage() {
           </div>
         </div>
 
-        <div className="home-diagnostic-banner concern-cta-band">
+        <div className="home-diagnostic-banner concern-cta-band concern-cta-split">
           <div className="home-diagnostic-copy">
             <span className="section-kicker">Precision Routine Building</span>
             <h2>Ready to assemble your daily ritual?</h2>
@@ -448,6 +448,14 @@ function SkinConcernsPage() {
               </Link>
             </div>
           </div>
+          <figure className="concern-cta-media">
+            <img
+              src="/site-assets/generated/consultation_skincare_specialist_1795752504253.jpg"
+              alt="ZORVELLAE skincare formulation consultant guiding a personalized ritual consultation"
+              loading="lazy"
+              referrerPolicy="no-referrer"
+            />
+          </figure>
         </div>
       </section>
     </Storefront>
